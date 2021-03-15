@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+plots/*.*
+*.doc
+*.docx
+*.html
+*.rds
+*.RData
+*.Rproj
