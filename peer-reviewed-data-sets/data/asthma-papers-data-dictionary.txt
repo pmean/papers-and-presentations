@@ -1,0 +1,100 @@
+Data dictionary for asthma-papers
+
+One or more occurences of the letter X in a field is a code for
+missing or not applicable.
+
+author, last name of first author. Remove half of any hyphenated 
+  or two part last name.
+  
+da, Classification of the resource. Was the resource a raw dataset?
+  RA=raw dataset
+  SD=summary dataset
+  CO=confidential, please contact the author
+  
+A raw dataset has information on distinct individuals, animals, cell
+cultures, etc. A summary dataset aggregates information across
+multiple individuals. It uses statistics like means, standard 
+deviations, counts, or percentages. There is not always a clear
+dividing line between the two.
+
+If there is more than one resource, code as RA if at least one of the
+resources is a raw dataset. Otherwise, code as SD otherwise.
+
+Try to find original publication and review it.
+
+pr, was the dataset associated with a peer-reviewed publication?
+  PR=peer-reviewed publication found and reviewed
+  BL=broken link
+  FL=peer-reviewed publication found but in a foreign language
+  PW=peer-reviewed publication found but behind a paywall
+  NP=publication not peer-reviewed, such as a pre-print
+  NF=no publication found
+
+This field should not be coded as missing (XX).
+
+If a peer-reviewed publication was found and reviewed, code the date of
+publication and look for a data availability statement and a link in 
+the paper back to figshare.
+
+yyyy, year of publication. Please use a four digit year. If you cannot
+  find the publication, code as XXXX.
+
+mm, month of publication. Include a leading zero for month 01 (January)
+  through 09 (September). If no month is given or you can't find the 
+  publication, code as XX.
+  
+da, date of publication. Include a leading zero for dates 01 through 09.
+  If no date is given or you can't find the publication, code as XX.
+  
+a, did the publication include a data availablity statement?
+  M=no, data availablity statement missing
+  C=yes, but data was not owned by authors
+  Q=yes, but statement was questionable
+  S=yes, but you have to ask for the data
+  Y=yes, and statement was accurate
+  P=yes, and privacy concerns prevented data sharing
+  X=did not look for data availability statement
+  
+Note to myself. Go back and look at all the C values. Some of
+these represent "not owned" but others represent "confidential"
+
+l, did the publication include a link back to figshare?
+  Y=yes, the publication mentioned figshare and included the link.
+  O=linked to a resource other than figshare
+  A=ambiguous, the publication mentioned figshare but without a link.
+  D=discrepancy in list in Figshare versus the publication
+  N=no, the publication did not mention figshare.
+  X=did not look for a link back to figshare
+  
+Note the data formats used, and count the number of times they were
+used. Code 0 for a format that was not used. Use the file extension;
+there is no need to confirm the format by downloading the file.
+
+csv, Comma separated values, a text format.
+
+doc, Microsoft Word file, a binary format. Also count docx files here.
+
+eps, Encapsulated Postscript, a graphic image format.
+
+mp4, A format for video or audio files. Also count mp3 files here.
+
+pdf, Portable Data Format, a binary format used primarily for 
+  formatted text, though it may also store graphic images or tables
+  of numbers or some combination text, images, or numbers.
+  
+txt, A text format. It could be in fixed width format or delimited.
+
+xls, Microsoft Excel file, a binary format. Also count xlsx files here.
+
+jpg, A graphic image format. Also count jpeg files here.
+
+tif, A graphic image format. Also count tiff files here.
+
+py, a computer program written in Python.
+
+dx, an unknown text format, possibly for genetic data
+
+zip, several individual files compressed and placed together in a single
+  file. If you encounter this format, download and uncompress the
+  individual files and count them as well as the zip file.
+ 

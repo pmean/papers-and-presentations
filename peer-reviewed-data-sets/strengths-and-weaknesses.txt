@@ -1,0 +1,10 @@
+Strengths
+
++ Every entry is automatically assigned a DOI.
++ Each figshare entry has a link to the peer-reviewed publication.
++ Can view most file formats within Figshare.
+
+Weaknesses
+
++ There is no link on the main page to any help files, FAQs, about, etc.
++ You need a separate account to use support.figshare.com.

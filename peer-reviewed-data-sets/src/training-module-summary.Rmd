@@ -1,0 +1,52 @@
+---
+title: "Training module summary"
+author: "Steve Simon"
+date: "Created 2020-05-20"
+output: html_document
+---
+
+I am interesting in submitting a proposal in response to RFA-GM-20-001: Training Modules to Enhance the Rigor, Reproducibility and Responsible Conduct of Biomedical Data Science Research. The link to this announcement is available [here](https://grants.nih.gov/grants/guide/rfa-files/RFA-GM-20-001.html).
+
+A tentative title for this grant would be
+
+"Data sharing, a four week overview with a critical review of existing practices"
+
+### Prior history
+
+I have written two small grants to some local groups to develop some preliminary data for this work. Although they did not get funded, I got some very helpful feedback.
+
+The two grants I applied for in 2019 are [here](simons_berd_part1.pdf) and [here](how good are peer-reviewed data sets part 1.pdf). This RFA represents a substantially different effort but I do plan on using elements of those two grants in my proposal.
+
+### Teaching about open data
+
+The basic concept would be to teach about the recent mandates for open data by NIH and others. Open data allows others to test the reproducibility of published research findings and to repurpose data for testing new hypotheses. Open data also offers wonderful opportunities in teaching, as students can analyze the data and compare their results with what appears in the peer-reviewed literature. Open data needs to follow the FAIR principles (Wilkinson. Sci Data 2016; 3: 160018), but these standards are followed inconsistently.
+
+### Critical review
+
+A major component of this training module will be a hands-on critical review of the quality of open data sets. Students would work in teams to identify a representative sample of open data sets published in a particular area. They would evaluate the quality of the documentation of these datasets. Then they would try to reproduce some of the descriptive statistics that typically appear in the first table of most publications (e.g., age range, proportion female).
+
+This exercise will reinforce several basic research skills: defining a population, setting up appropriate inclusion/exclusion criteria, drawing a representative sample, extracting information, and drawing inferences. Most importantly, reproducing someone else's research will show these students good documentation practices in a way that no lecture could. Suffering through the difficulty of reproducing someone else's work will sensitize you to the need for careful documentation when you are the one producing the work.
+
+The students would have broad latitude in defining the population of studies that they want to review. They could examine datasets appearing a particular journal, datasets in a particular medical or scientific specialty, datasets found in a particular data repository or some combination. As such, this module could be targeted to trainees and researchers in any discipline and at any career level.
+
+### Module design
+
+The training materials and active learning exercise would be designed to be completed in a four week module, which could serve as a stand-alone one credit hour class, or which could provide a practical research experience to supplement an existing class on research design or research ethics.
+
+The materials produced would be captioned videos covering data sharing mandates, privacy concerns, and data management practices that help insure reproducibility. In addition, I would provide Powerpoint slides and speaker notes for teachers who would want to prepare their own lectures. These resources would be supplemented with small practice exercises with a strong emphasis on writing. Every exercise will include a grading rubric.
+
+### Need for evaluation
+
+Like any good RFA, this one asks for a rigorous approach with evaluations throughout the process. Effectiveness of the training module needs to be done with pilot testing before rolling out the work. The resources developed need to evaluated "in terms of their frequency and their usefulness." They would like to see "multiple evaluation approaches" as well as "testing several groups with different characteristics." The evaluation must "gauge the short and long term success" and test for "content comprehension and retention." This requires "feedback from test
+groups to help identify weaknesses and to provide suggestions for improvements."
+
+The RFA asks for "a specific plan for disseminating the finished training modules
+online and their digital material nationally, and for making them accessible to everyone at no cost." I'm a big proponent of free stuff, and it is only appropriate that a module on sharing data freely should share itself freely as well.
+
+### Tight deadline
+
+The grant is due on June 19, which is a very tight deadline. I think I can get everything pulled together, but if not, I will have a foundation for putting together a future grant.
+
+### Next steps
+
+I finished a small pilot effort already with a fifth year medical student. We want to publish this work in a journal on medical education. I need to contact several people to build a strong research team. Especially important are members who can provide good skills in information searching and on educational evaluation. I will post updates on my progress on this website. This might be a direct update to this page or I might include a link on this page to a fresh page. 

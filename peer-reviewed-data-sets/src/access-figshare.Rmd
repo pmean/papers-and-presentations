@@ -1,0 +1,18 @@
+---
+title: "Accessing figshare files"
+author: "Steve Simon"
+date: "5/13/2020"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo=FALSE)
+suppressMessages(suppressWarnings(library(rfigshare)))
+```
+
+The package rfigshare allows you to work with the data repository figshare within an R program.
+
+```{r authorize-first-use}
+tst1 <- fs_author_search("Boettiger")
+tst2 <- fs_browse(mine=FALSE, public_only=TRUE, query="COVID-19")
+```

@@ -1,0 +1,70 @@
+---
+title: "Lead dust sample size calculations"
+author: "Steve Simon"
+output: html_document
+---
+
+This program was created on 2020-06-11 and was last modified on `r Sys.Date()`.
+
+From an email dated 2020-06-04.
+
+I requested enough data from Amy at KCHD for us to get a convenience sample of pre-clearance lead wipes but so far nothing has been forthcoming. They are swamped over there dealing with covid and Kevin just let us know that much of the healthy homes team that she works with has recently retired, so they may be too understaffed to get us that data in a timely fashion. So I went and grabbed something from the existing literature. 
+
+In a paper published in 2012 (though the samples were from the late 90's) among a sample of 189 homes the geometric mean of lead dust on floors was 20.8µg/ft^2 GSD 5.5µg/ft^2 and the GM on windowsills in those homes (n=188) was 221µg/ft^2 GSD 7µg/ft^2. 
+
+How big a sample will we need to get a reasonable confidence interval? 
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Run a simple test example first.
+
+```{r}
+x0 <- power.t.test(
+  n=64, 
+  delta=0.5, 
+  sd=1, 
+  sig.level=0.05, 
+  type="two.sample", 
+  alternative="two.sided")
+```
+
+Look for a 50% higher lead dust concentration in windowsills of houses with a high risk index. This calculation is for unpaired data. Don't use this calculation, as the power is way too low. I'm just running it to get a general perspective.
+
+```{r}
+ratio <- 2
+log_ratio <- log(ratio)
+gsd <- 7
+log_sd <- log(gsd)
+x1 <- power.t.test(
+  n=50, 
+  delta=log_ratio, 
+  sd=log_sd, 
+  sig.level=0.05, 
+  type="two.sample", 
+  alternative="two.sided")
+x1
+```
+
+Pairing will improve precision. How much depends on how strongly the pairs are correlated. It relies on the formula
+
+$Var(\bar{X}_T-\bar{X}_C)=2\sigma^2$ under independence, and
+
+$Var(\bar{X}_T-\bar{X}_C)=2\sigma^2(1-\rho)$ when samples are paired.
+
+Mathematically, the second variance is always less than the first. It is much much smaller when the correlation is close to 1, which is what we'd expect in this setting.
+
+```{r}
+correlation.within.pairs <- 0.6
+x2 <- power.t.test(
+  n=50, 
+  delta=log_ratio, 
+  sd=log_sd*sqrt(1-correlation.within.pairs), 
+  sig.level=0.05, 
+  type="two.sample", 
+  alternative="two.sided")
+x2
+```
+
+With a sample of `r x2$n` high risk houses, we would have `r round(100*x2$power)`% power for detecting a `r ratio` fold average increase in lead dust levels compared to the matched control houses. This assumes a two-sided test at an alpha level of 0.05, a geometric standard deviation of `r gsd` based on (cite the 2012 paper), and a correlation between matched pairs of `r correlation.within.pairs`.
