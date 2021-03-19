@@ -1,0 +1,58 @@
+---
+title: 'Baby steps: a simple illustration of the Metropolis algorithm'
+author: "Steve Simon"
+date: "2021-03-19"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Abstract
+
+The Metropolis algorithm is a simple approach to generating random observations from a distribution where the density is known up to a proportionality constant. This algorithm is the easiest to understand and to implement of various methods used in Markov Chain Monte Carlo. In this paper, we show a simple example of the Metropolis algorithm to simulate the geometric distribution with $\pi$=1/2, and describe the resulting simulation as analogous to a baby learning to walk.
+
+### Introduction
+
+Consider a baby learning to walk. The baby is standing next to a couch, holding on for support. The baby decides to take one step away from the couch with probability 1/4 and stay next to the couch with probability 3/4. Once away from the security of the couch, the baby takes a step forward with probability 1/4, stays in place with probability 1/4, and steps backwards (towards the couch) with probability 1/2. How much time does the baby spend clutching the couch?
+
+https://fivethirtyeight.com/features/will-the-baby-walk-away-will-the-troll-kill-the-dwarves/
+
+You can solve this question easily with a computer simulation, but I derived the problem using the Metropolis algorithm to simulate a geometric distribution with p=1/2.
+
+```{r, echo=FALSE}
+suppressMessages(suppressWarnings(library(knitr)))
+suppressMessages(suppressWarnings(library(tidyverse)))
+suppressMessages(suppressWarnings(library(usmap)))
+
+knitr::opts_chunk$set(echo=FALSE, fig.width=6, fig.height=3)
+```
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 80
+xbox <- 10*c(-1, -1,  1,  1, -1) + xc
+ybox <- 10*c(-1,  1,  1, -1, -1) + yc
+data.frame(x=xbox, y=ybox) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=c(0, 100), y=c(0, 100)) +
+  theme_void() +
+  geom_path(size=sz) + 
+  geom_text(x=xc, y=yc, label="S") +
+  geom_path(x=xbox+30, y=ybox-30, size=sz) +
+  geom_text(x=xc+30, y=yc-30, label="I") +
+  geom_path(x=xbox+60, y=ybox-60, size=sz) +
+  geom_text(x=xc+60, y=yc-60, label="R") +
+  geom_curve(
+    x=xc+40, y=yc-35, xend=xc+55, yend=30, curvature=-0.3, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot +
+  geom_curve(
+    x=xc+10, y=yc- 5, xend=xc+25, yend=yc-20, curvature=-0.3, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches")))
+```
+
+*Figure 1. Baby walk
+
