@@ -32,27 +32,51 @@ knitr::opts_chunk$set(echo=FALSE, fig.width=6, fig.height=3)
 ```{r}
 sz <- 1.2
 xc <- 20
-yc <- 80
-xbox <- 10*c(-1, -1,  1,  1, -1) + xc
-ybox <- 10*c(-1,  1,  1, -1, -1) + yc
-data.frame(x=xbox, y=ybox) %>%
+yc <- 20
+data.frame(x=20, y=20) %>%
   ggplot(aes(x, y)) +
   expand_limits(x=c(0, 100), y=c(0, 100)) +
   theme_void() +
-  geom_path(size=sz) + 
-  geom_text(x=xc, y=yc, label="S") +
-  geom_path(x=xbox+30, y=ybox-30, size=sz) +
-  geom_text(x=xc+30, y=yc-30, label="I") +
-  geom_path(x=xbox+60, y=ybox-60, size=sz) +
-  geom_text(x=xc+60, y=yc-60, label="R") +
+  geom_text(x=xc, y=yc, label="0") +
+  geom_text(x=xc+30, y=yc, label="1") +
+  geom_text(x=xc, y=yc+30, label="p=3/4") +
+  geom_text(x=xc+17.5, y=yc+30, label="p=1/4") +
   geom_curve(
-    x=xc+40, y=yc-35, xend=xc+55, yend=30, curvature=-0.3, size=sz, 
+    x=xc, y=yc+10, xend=xc-1, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+5, y=yc+10, xend=xc+30, yend=yc+10, curvature=-0.6, size=sz, 
     arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
-sir_plot +
-  geom_curve(
-    x=xc+10, y=yc- 5, xend=xc+25, yend=yc-20, curvature=-0.3, size=sz, 
-    arrow = arrow(type = "closed", length=unit(0.15, "inches")))
+sir_plot
 ```
 
 *Figure 1. Baby walk
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=c(0, 100), y=c(0, 100)) +
+  theme_void() +
+  geom_text(x=xc, y=yc, label="k-1") +
+  geom_text(x=xc+30, y=yc, label="k") +
+  geom_text(x=xc+60, y=yc, label="k+1") +
+  geom_text(x=xc+30, y=yc+30, label="p=1/4") +
+  geom_text(x=xc+47.5, y=yc+30, label="p=1/4") +
+  geom_text(x=xc+12.5, y=yc+30, label="p=1/2") +
+  geom_curve(
+    x=xc+30, y=yc+10, xend=xc+29, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+25, y=yc+10, xend=xc, yend=yc+10, curvature=0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+35, y=yc+10, xend=xc+60, yend=yc+10, curvature=-0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
+
+*Figure 2. Baby walk
 
