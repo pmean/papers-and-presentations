@@ -80,3 +80,19 @@ sir_plot
 
 *Figure 2. Baby walk
 
+The Metropolis algorithm, first defined in Metropolis (1953) was originally developed to study the properties of substances composed of a finite number of interacting molecules. The method has proven useful for many physics problems such as simulated annealing (Kirkpatrick 1983)
+
+### Discussion
+
+John Kruschke motivates the Metropolis algorithm in Chapter 7 of his delightful book on Bayesian data analysis (Kruschke 2014). He describes an island hopping politician who wants to spend time on each island in proportion to its population. He can hop to the east or west, or stay on the current island, and uses the mechanics of the Metropolis algorithm to choose when to hop islands and when to stay put. The baby-walk example is similar in spirit, but provides a concrete distribution to evaluate.
+
+Jim Albert and Jingchen Hu propose an arbitrary discrete distribution with five values and shows how students can simulate from this distribution using coin flips.
+
+### Bibliography
+
+S. Kirkpatrick; C. D. Gelatt; M. P. Vecchi
+Science, New Series, Vol. 220, No. 4598. (May 13, 1983), pp. 671-680.
+
+Kruschke, John (2014). Doing Bayesian Data Analysis. A Tutorial with R, JAGS, and Stan. 2nd edition. Academic Press.
+
+Metropolis, Nicholas; Rosenbluth, Arianna W.; Rosenbluth, Marshall N.; Teller, Augusta H.; Teller, Edward (1953). "Equation of State Calculations by Fast Computing Machines". J. Chem. Phys. 21 (6): 1087. doi:10.1063/1.1699114.
