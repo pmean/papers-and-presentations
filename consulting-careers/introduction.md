@@ -129,11 +129,39 @@ I'm pretty happy where I am, but certainly would not mind hearing about other op
   + KNowing foundations increases your confidence level
   + Also makes you a quick learner of new methods
 
+<div class="notes">
+
+I have to cite two extremes. The first set of classes that I got the most out of were the very applied Statistics classes that I took from outside the Department of Statistics at Iowa. There were two classes in Biostatistics: Categorical Data Analysis and Survival Analysis, and one in Education, Scaling methods. These helped me see better how the broadly based classes in my own department could be applied to solve real world problems.
+
+The other class was quite theoretical, and it helped me understand some of the foundations. Knowing the foundations gives you a higher level of confidence in what you do. You know both the how and why of what you do. It also makes you a fast learner. When you can "peek under the hood" and know how a new methodology works, you can pick up that new methodology so much faster.
+
+</div>
+
 ### Which aspects of your work did you learn on the job?
 
++ Evidence-Based Medicine
++ Gibbs sampling
++ How to supervise
++ Meta-analysis
++ Mixed models
++ Model based clustering
++ Modern statistical software
++ Smoothing splines
 
+<div class="notes">
+
+There are a lot of areas that just didn't exist when I went to school. I spend a lot of time on continuing education.
+
+</div>
 
 ### What, if anything, do you wish you knew before entering the workforce or taking your current position?
+
++ Interpersonal consulting skills
++ Start early on publications
+
+<div class="notes">
+
+</div>
 
 ### How much should an entry level statistician expect to make in your field? After 5 years of experience?
 
@@ -154,10 +182,24 @@ I'm pretty happy where I am, but certainly would not mind hearing about other op
   + Presentations
   + Volunteer
 
+<div class="notes">
+
+
+
+</div>
+
 ###	What advice do you have to give regarding balancing competing priorities?
 
 + Life is short. Do the fun stuff first.
 + Ask your boss for priorities
+
+<div class="notes">
+
+It can get you in trouble sometimes, but do spend time doing what you consider fun. The uninteresting stuff will need to get done eventually, but you can't be a slave to this. Life gets boring if you can't work on what you love.
+
+Of course, your boss should have a strong say in what your priorities are, if you have a boss.
+
+</div>
 
 ###	What do you do when you have a project that is outside your level of expertise (who or what resources do you consult)?
 
@@ -168,14 +210,32 @@ I'm pretty happy where I am, but certainly would not mind hearing about other op
   + Books, short courses, Internet resources
   + Build a network of helpers
 
+<div class="notes">
+
+it helps a lot in consulting to be able to field questions from any direction. So I try very hard to know a little bit about everything. While I will sometimes say "I'm not qualified to do this work," I do try very hard to  build my knowledge base to the point where I can help out with any reasonable request. I do warn people when I am not an "expert" in a particular area, though, and am not offended if they find someone who knows more about an issue than I do. But often these people do not have the time or energy or knowledge to find someone better than me, and I would feel bad if they didn't get any help.
+
+</div>
+
 ###	What is an issue you have faced working with a client or collaborator, and what did you learn from it?
 
 + Get and give regular feedback
+
+<div class="notes">
+
+You can't go off by yourself for weeks or months and hope that when you emerge, you will have the perfect data analysis. There is a lot of back-and-forth that needs to happen continually.
+
+</div>
 
 ### What are some ethical dilemmas you have faced in your job? 
 
 + Asking for the impossible
   + "Blood from a turnip" test
+
+<div class="notes">
+
+
+
+</div>
 
 
 
