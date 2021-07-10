@@ -1,0 +1,127 @@
+---
+title: "read-duodenum"
+author: "Steve Simon"
+date: "6/13/2021"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo=TRUE)
+suppressMessages(suppressWarnings(library(circular)))
+suppressMessages(suppressWarnings(library(dplyr)))
+suppressMessages(suppressWarnings(library(ggplot2)))
+suppressMessages(suppressWarnings(library(magrittr)))
+```
+
+```{r read-1}
+file_list <- list.files(path="../data", pattern="*csv")
+file_list
+file_list <- "https://raw.githubusercontent.com/newby-jay/SSC_Workshop_2021/main/Project%20Salmonella/Tracks/160706_WT_Q/Duodenum/160706_WT_Q_Duodenum_NoAbAdded_9.csv"
+for (fn in file_list) {
+  raw1 <- read.csv(fn, header=TRUE)
+  print(str(raw1))
+}
+```
+
+```{r plot}
+raw1 %>%
+  ggplot(aes(x, y, group=particle)) +
+    geom_line()
+```
+
+```{r center}
+raw1 %>%
+  group_by(particle) %>%
+  slice(1) %>%
+  select(-t) %>%
+  rename(x0=x, y0=y) %>%
+  full_join(raw1) %>%
+  mutate(x=x-x0, y=y-y0) %>%
+  select(particle, x, y, t) -> cen
+cen %>%
+  ggplot(aes(x, y, group=particle)) +
+    geom_line(alpha=0.1)
+```
+
+```{r chk}
+raw1 %>%
+  group_by(particle) %>%
+  summarize(
+    min_t=min(t),
+    max_t=max(t),
+    n=n()
+  ) %>%
+  mutate(t_range=max_t-min_t) %>%
+  filter(t_range > n-1) %>%
+  data.frame
+```
+
+```{r dist}
+raw1 %>%
+  group_by(particle) %>%
+  mutate(x0=lag(x), y0=lag(y)) %>%
+  mutate(d=(sqrt((x-x0)^2+(y-y0)^2))) %>%
+  summarize(d=mean(d, na.rm=TRUE, n=min(n))) %>%
+  mutate(d=round(d, 2)) %>%
+  data.frame -> dist1
+head(dist1)
+```
+
+```{r label-plot}
+raw1 %>%
+  inner_join(dist1) %>%
+  group_by(particle) %>%
+  slice(1) %>%
+  full_join(raw1) %>%
+  arrange(particle, t) %>%
+  data.frame -> lb
+head(lb)
+```
+
+```{r}
+lb %>%
+  ggplot(aes(x, y, group=particle, label=d)) +
+    geom_line() +
+    geom_label()
+```
+
+```{r angle}
+raw1 %>%
+  group_by(particle) %>%
+  mutate(x0=lag(x), y0=lag(y)) %>%
+  mutate(a=atan2(y-y0, x-x0)) %>%
+  summarize(a=sd.circular(a, na.rm=TRUE)) %>%
+  mutate(a=round(a, 2)) %>%
+  data.frame -> angle1
+head(angle1)
+```
+
+```{r angle-label}
+angle1 %>%
+  full_join(cen) %>%
+  group_by(particle) %>%
+  slice_tail(n=1) %>%
+  full_join(cen) %>%
+  ggplot(aes(x, y, group=particle, label=a)) +
+    geom_line() +
+    geom_label()
+```
+
+```{r single-path}
+i <- 3
+for (i in 1:max(cen$particle)) {
+  angle1 %>%
+    full_join(cen) %>%
+    group_by(particle) %>%
+    slice_tail(n=1) %>%
+    full_join(cen) %>%
+    filter(particle==i) -> x
+  x %>%
+    ggplot(aes(x, y, group=particle, label=a)) +
+      geom_path() +
+      expand_limits(x=range(cen$x)) +
+      expand_limits(y=range(cen$y)) +
+      geom_label() -> g
+  print(g)
+}
+```

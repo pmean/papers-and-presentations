@@ -5,6 +5,49 @@ date: "February 11, 2017"
 output: html_document
 ---
 
+### Overview
+
++ infix operators
++ invasion of the tidys
+  + ggplot2
+  + dplyr
+  + purr
+  + magrittr
++ simple pipe examples
+  + vector in frequency order
+  
+<div class="notes">
+
+author: Steve Simon
+
+purpose: to illustrate the use of pipes in the maggrittr package
+
+license: public domain
+
+I want to talk about the pipe operator in the magirttr package. First, I'll review infix operators, and talk about how a group of programmers led by Hadley Wickham have hijacked the R programming language and re-oriented it in strange ways. 
+
+### The infix operator
+
++ A function that does not look like a function.
++ Examples: +, -, *, /, ^, %%, %/%, :
+
+```{r}
+1+2
+`+`(1, 2)
+```
+
+<div class="notes">
+
+R has a class of functions known as infix operators. These are functions that allow a shorthand approach to programming that allows you to specify many computations using an algrebra-like syntax. The "+" operator, for example is a function that takes what is to the left of the + sign as the first argument, what is to the right of the + sign as the second argument and the function adds the two arguments together.
+
+You can show the infix operator as a more traditional function by surrounding it with backticks.
+
+</div>
+
+### Defining your own infix operators
+
++ Use `%something%`
+
 I've recently started using the magrittr package a lot in my R programs. This package implements the pipe operator %>%. A very simple explanation of how the pipe operator works is found in the [README file](https://cran.r-project.org/web/packages/magrittr/README.html) of the package. .
 
 
@@ -22,7 +65,7 @@ The first time I saw this, I was scratching my head and wondering "Why?". It tur
 
 First a historical note. The name "magrittr" is a play on the name of a famous surrealist artist, [Rene Magritte](https://en.wikipedia.org/wiki/Ren%C3%A9_Magritte), who included a quote "Ceci n'est pas une pipe" (This is not a pipe) in one of his [paintings](https://en.wikipedia.org/wiki/The_Treachery_of_Images).
 
-## Nested parentheses.
+### Nested parentheses.
 
 There's a [cute joke about LISP](http://www.netfunny.com/rhf/jokes/90q2/lispcode.html) that emphasizes the problems with nested parentheses in that language. the code." R is not quite that bad, but it can have a lot of parentheses. Here's an example.
 
@@ -110,7 +153,7 @@ tst$x   %>%
 top_values
 ```
 
-## Avoiding repeat typing of data frame names
+### Avoiding repeat typing of data frame names
 
 One commonly offered advice for new R programmers is to keep the names of your data frames very short. The reason for this is that you often end up typing the data frame names multiple times even within a single command. Here is an example. Suppose you want to change the values of "c" in the data frame to "e" but keep everything else the same. The R code to do this is
 
