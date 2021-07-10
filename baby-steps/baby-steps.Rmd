@@ -6,7 +6,7 @@ output: word_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.width=10)
 ```
 
 ### Abstract
@@ -26,16 +26,18 @@ suppressMessages(suppressWarnings(library(knitr)))
 suppressMessages(suppressWarnings(library(tidyverse)))
 suppressMessages(suppressWarnings(library(usmap)))
 
-knitr::opts_chunk$set(echo=FALSE, fig.width=6, fig.height=3)
+knitr::opts_chunk$set(echo=FALSE, fig.width=6, fig.height=1.25)
 ```
 
 ```{r}
+x_limits <- c(0, 110)
+y_limits <- c(19, 50)
 sz <- 1.2
 xc <- 20
 yc <- 20
 data.frame(x=20, y=20) %>%
   ggplot(aes(x, y)) +
-  expand_limits(x=c(0, 100), y=c(0, 100)) +
+  expand_limits(x=x_limits, y=y_limits) +
   theme_void() +
   geom_text(x=xc, y=yc, label="0") +
   geom_text(x=xc+30, y=yc, label="1") +
@@ -54,11 +56,11 @@ sir_plot
 
 ```{r}
 sz <- 1.2
-xc <- 25
+xc <- 50
 yc <- 20
 data.frame(x=20, y=20) %>%
   ggplot(aes(x, y)) +
-  expand_limits(x=c(0, 100), y=c(0, 100)) +
+  expand_limits(x=x_limits, y=y_limits) +
   theme_void() +
   geom_text(x=xc, y=yc, label="k-1") +
   geom_text(x=xc+30, y=yc, label="k") +
@@ -102,7 +104,7 @@ if $\theta$ is discrete.
 
 The Metropolis algorithm is especially helpful if $\theta$ is high dimensional, because the evaluation of the denominator can difficult to do, either exactly or approximately. The Metropolis algorithm works even if the denominator is unknown because it relies on the ratio
 
-$\frac{p(\theta | x)}{p(\theta | x)}$
+$\frac{p(\theta | x)}{p(\theta' | x)}$
 
 and the denominators cancel out in this ratio.
 
@@ -112,11 +114,59 @@ Select a starting point X0 that satisfies p(X0)>0. At time points t=1, 2, ..., s
 
 You will select a new value X1, which is either X' or X0. The selection depends on the ratio r=p(X')/p(X0). If r is greater than 1, you always select X'. If r is less than 1, you select X' with probability r and X0 with probability 1-r.
 
+
+
 Now repeat this process using X1. Select a provisional value X' from the jumping distribution J(X'|X1). Note that the jumping distribution is now conditional on a different value. Compute the ratio r=p(X')/p(X1). Select X2 equal to either X1 or X' depending on the ratio r. Continue this process to generate X3, X4, etc.
 
 The rationale for this approach is that you should look randomly in a variety of directions. If the new location is more likely than your current location, always sample the new location. If the new location is little less likely, then it makes sense most of the time to jump to the new location, but once in a while you will be better off staying at the current location. If the new location is much less likely, you will only rarely jump to that part of the distribution.
 
 With any reasonable jumping function, you can show that this algorithm visits all the regions of the distribution and with probabilities that are appropriately large or small.
+
+Figure x illustrates the decision rule on jumping or not.
+
+```{r, warning=FALSE}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc+15, y=yc+15, label=expression(r  >= 1)) +
+  geom_text(x=xc+30, y=yc, label="X", col="gray") +
+  geom_text(x=xc+60, y=yc, label="X'") +
+  geom_text(x=xc+30, y=yc+30, label=" ", col="gray") +
+  geom_text(x=xc+47.5, y=yc+30, label="Always jump") +
+  geom_curve(
+    x=xc+30, y=yc+10, xend=xc+29, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches")), col="gray") +
+  geom_curve(
+    x=xc+35, y=yc+10, xend=xc+60, yend=yc+10, curvature=-0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
+
+```{r, warning=FALSE}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc+15, y=yc+15, label=expression("r < 1")) +
+  geom_text(x=xc+30, y=yc, label="X") +
+  geom_text(x=xc+60, y=yc, label="X'") +
+  geom_text(x=xc+30, y=yc+30, label="P[stay]=1-r") +
+  geom_text(x=xc+47.5, y=yc+30, label="P[jump]=r") +
+  geom_curve(
+    x=xc+30, y=yc+10, xend=xc+29, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+35, y=yc+10, xend=xc+60, yend=yc+10, curvature=-0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
 
 ### Applying the Metropolis algorithm to the Geometric distribution
 
@@ -127,12 +177,113 @@ $p(X=k)=(1-\pi)^k\pi, \quad k=0, 1, 2,...$
 
 For $\pi=1/2$, the formula simplifies to 
 
-$p(X=k)=\big(\frac{1}{2}\big)^{k+1}$
+$p(X=k)=\Big(\frac{1}{2}\Big)^{k+1}$
 
 To simulate the Metropolis algorithm, specify a jumping distribution $j(X' | X)$
 
 Define a jumping distribution $J(X' | X)$ with probability 1/2 at X'=X-1 and at X'=X+1. This is a simple jumping distribution that moves one unit to the left or right with equal probability.
 
+Note that the ratio of two consecutive probabilities is
+
+$\frac{P[X=k+1]}{P[X=k]}= \frac{1}{2}$
+
+At X=0, a jump to the left represents jumping to a value (-1) with probability 0. A jump to the right represents jumping to a value which is half as likely.
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc-15, y=yc+15, label="r=0") +
+  geom_text(x=xc, y=yc, label="-1", col="gray") +
+  geom_text(x=xc+30, y=yc, label="0") +
+  geom_text(x=xc+30, y=yc+30, label="Always Stay") +
+  geom_text(x=xc+12.5, y=yc+30, label="Never Jump", col="gray") +
+  geom_curve(
+    x=xc+30, y=yc+10, xend=xc+29, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+25, y=yc+10, xend=xc, yend=yc+10, curvature= 0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches")), col="gray") -> sir_plot
+sir_plot
+```
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc-15, y=yc+15, label="r=1/2") +
+  geom_text(x=xc+30, y=yc, label="0") +
+  geom_text(x=xc+60, y=yc, label="1") +
+  geom_text(x=xc+30, y=yc+30, label="P[Stay]=1/2") +
+  geom_text(x=xc+47.5, y=yc+30, label="P[Jump]=1/2") +
+  geom_curve(
+    x=xc+30, y=yc+10, xend=xc+29, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+35, y=yc+10, xend=xc+60, yend=yc+10, curvature=-0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
+
+Combine these two cases to compute the transition probabilities 3/4 for staying at 0 (continue to clutch the couch) and 1/4 for taking the first step away from the couch.
+
+Once away from the couch, the probabilities change. A step to the left represents a doubling of the probability, so a step to the left will always be taken.
+
+A step to the right represents a halving of the probability, so a step to the right will be taken half of the time and the baby stays in place half of the time.
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc-15, y=yc+15, label="r=0", col="gray") +
+  geom_text(x=xc+30, y=yc, label="X-1") +
+  geom_text(x=xc+60, y=yc, label="X", col="gray") +
+  geom_text(x=xc+60, y=yc+30, label="Never Stay", col="gray") +
+  geom_text(x=xc+42.5, y=yc+30, label="Always Jump") +
+  geom_curve(
+    x=xc+60, y=yc+10, xend=xc+59, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches")), col="gray") +
+  geom_curve(
+    x=xc+55, y=yc+10, xend=xc+30, yend=yc+10, curvature= 0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
+
+```{r}
+sz <- 1.2
+xc <- 20
+yc <- 20
+data.frame(x=20, y=20) %>%
+  ggplot(aes(x, y)) +
+  expand_limits(x=x_limits, y=y_limits) +
+  theme_void() +
+  geom_text(x=xc-15, y=yc+15, label="r=1/2") +
+  geom_text(x=xc+60, y=yc, label="X") +
+  geom_text(x=xc+90, y=yc, label="X+1") +
+  geom_text(x=xc+60, y=yc+30, label="P[Stay]=1/2") +
+  geom_text(x=xc+77.5, y=yc+30, label="P[Jump]=1/2") +
+  geom_curve(
+    x=xc+60, y=yc+10, xend=xc+59, yend=yc+10, curvature=15, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) +
+  geom_curve(
+    x=xc+65, y=yc+10, xend=xc+90, yend=yc+10, curvature=-0.6, size=sz, 
+    arrow = arrow(type = "closed", length=unit(0.15, "inches"))) -> sir_plot
+sir_plot
+```
+
+Combine these to get transtion probabilities of 1/2 for going one step to the left, 1/4 for staying in place, and 1/4 for going one step to the right.
 
 ### Discussion
 
