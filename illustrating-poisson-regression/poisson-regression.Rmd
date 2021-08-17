@@ -24,3 +24,5 @@ Poisson Regression | R Data Analysis Examples. Available in [html format][ucl1].
 [vig1]: https://cran.r-project.org/web/packages/pscl/vignettes/countreg.pdf
 
 [ucl1]: https://stats.idre.ucla.edu/r/dae/poisson-regression/
+
+https://sphweb.bumc.bu.edu/otlt/mph-modules/ep/ep713_association/ep713_association3.html
