@@ -551,6 +551,10 @@ draw_circles() + geom_text(x=0, y=-0.1, label="Data\nScience", size=10)
 
 If you are interested, email me: simons@umkc.edu
 
+You can find my talk here:
+
+https://github.com/pmean/papers-and-presentations/blob/master/dark-side/2021-talk.pptx
+
 <div class="notes">
 
 I'd like to end with an exhortation. We need people like you in data science. It's okay to spend most of your time learning the complexities of medicine, but some of you have a bit of talent and aptitude in math/stat and in computers/coding. That's an advantage your generation has that my generation did not. So you have the ability to appreciate the full picture more so than people my age. A few of us knew computers well, but today's generation is saturated in computational experience.
