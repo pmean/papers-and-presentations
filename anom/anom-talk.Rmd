@@ -1,0 +1,40 @@
+---
+title: "An Introduction to Analysis of Means"
+author: "Steve Simon"
+date: "Created 2022-04-03"
+output: powerpoint_presentation
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+### Introduction
+
++ Analysis of Means
+  + Applications
+    + Quality control
+    + Institutional comparisons
++ Similar but different from ANOVA
++ ANOM advantages
+  + Easy to calculate
+  + Simple, interpretable conclusions
+
+<div class="notes">
+
+An Introduction to Analysis of Means
+
+Analysis of Means (ANOM) is an underappreciated methodology that has relevance to quality control and institutional comparisons. Unlike Analysis of Variance (ANOVA), which compares one group mean to another group mean, ANOM compares each group mean to the overall mean. The calculations in ANOM are simple and direct. ANOM also avoids many of the ambiguities inherent in the multiple comparisons used in ANOVA, and avoids a common misinterpretation about overlapping confidence intervals. This talk will illustrate the mechanics of calculating ANOM and provide context for when you should or should not use it.
+
+</div>
+
+### Review: Analysis of Variance
+
++ $$H_0: \mu_i=\mu_j \ for \ all \ i, j$$
++ $$H_1: \mu_i \ne \mu_j \ for \ at  \ least \ one \ i, j$$
+  + Reject $H_0$ if $F=\frac{MSTR}{MSE} > F(1-\alpha, k-1, N-k)$
+  + Apply post hoc test (e.g., Tukey)
+  
+<div class="notes">
+
+Let's review the basic Analysis of Variance hypotheses. Let's keep things simple. You have a continuous outcome measured n times in k groups. The null hypothesis is that the population mean is the same for each group. The alternative is that there is at least one pair i,j where the group means differ. You use an F statistic defined as the Mean Square Treatment divided by the Mean Square Error and compare it to a percentile of the F distribution. I won't go into the calculation any more other than to note that if you reject the null hypothesis, you typically apply a post hoc comparison, such as Tukey to identify which pair or pairs differ.
