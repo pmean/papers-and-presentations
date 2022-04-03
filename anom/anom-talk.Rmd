@@ -1,5 +1,5 @@
 ---
-title: "An Introduction to Analysis of Means"
+title: "An introduction to Analysis of Means"
 author: "Steve Simon"
 date: "Created 2022-04-03"
 output: powerpoint_presentation
@@ -7,15 +7,19 @@ output: powerpoint_presentation
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE)
+suppressMessages(
+  suppressWarnings(
+    library(tidyverse)))
 ```
 
 ### Introduction
 
-+ Analysis of Means
++ Analysis of Means (ANOM)
   + Applications
     + Quality control
     + Institutional comparisons
 + Similar but different from ANOVA
++ Similar but different from control charts
 + ANOM advantages
   + Easy to calculate
   + Simple, interpretable conclusions
@@ -38,3 +42,347 @@ Analysis of Means (ANOM) is an underappreciated methodology that has relevance t
 <div class="notes">
 
 Let's review the basic Analysis of Variance hypotheses. Let's keep things simple. You have a continuous outcome measured n times in k groups. The null hypothesis is that the population mean is the same for each group. The alternative is that there is at least one pair i,j where the group means differ. You use an F statistic defined as the Mean Square Treatment divided by the Mean Square Error and compare it to a percentile of the F distribution. I won't go into the calculation any more other than to note that if you reject the null hypothesis, you typically apply a post hoc comparison, such as Tukey to identify which pair or pairs differ.
+
+</div>
+
+### Interpretation issues with ANOVA (1/4)
+
+![Figure 1. Individual confidence intervals in an ANOVA setting](images/touching-intervals.png)
+
+<div class="notes">
+
+The interpretation of ANOVA models is tricky. Here is an example I am borrowing from a website, Statistics By Jim,
+
+https://statisticsbyjim.com/anova/post-hoc-tests-anova/
+
+The data represents strength measured for four different batches of materials. Notice how the individual confidence intervals for A and B just barely touch. You can see it better, perhaps on the following graph. You'd be tempted to say that there is no statistically significant difference between batches A and B, but you'd be wrong. The uncertainty associated with individual means does not translate in an additive sense to comparisons between two means. The standard errors are sub-additive, so  two intervals that are only lightly embracing would look different if you computed the confidence interval for the difference.
+
+This is ignoring, of course, the issue of multiplicity, but the point is still important to note. The graphical display of individual means and confidence intervals can be misleading.
+
+</div>
+
+### Interpretation issues with ANOVA (2/4)
+
+```{r touching-intervals}
+x <- c(37.73, 31.57, 35.98, 41.07)
+y <- 1:4
+lo <- c(34.37, 28.20, 32.62, 37.70)
+hi <- c(41.10, 34.93, 39.35, 44.43)
+data.frame(x=x, y=y) %>%
+  ggplot(aes(x, y)) +
+    expand_limits(x=c(25, 45)) +
+    geom_point() +
+    ylab(" ") +
+    geom_segment(x=lo, y=y, xend=hi, yend=y) +
+    scale_y_continuous(breaks=1:4, minor_breaks=NULL, labels=LETTERS[1:4])
+```
+
+### Interpretation issues with ANOVA (3/4)
+
+![Figure 3. Tukey confidence intervals in an ANOVA setting](images/tukey-intervals.png)
+
+<div class="notes">
+
+Here's another difficulty with interpretation in the ANOVA setting. These are intervals for the difference in means, using a Tukey post hoc adjustment.
+
+</div>
+
+### Interpretation issues with ANOVA (4/4)
+
+![Figure 4. Graphical display of Tukey intervals](images/tukey-graph.png)
+<div class="notes">
+
+Here is a graphical display of these intervals.  Let's ignore C for the time being. Remember that B is the weakest material, D is the strongest, and A is somewhere in the middle. Looking at these intervals, there is no statistically significant difference between B and A, none between A and D, but there is a statistically significant difference between B and D.
+
+Now I don't mean to harp on this point too much. ANOVA is a great technique. It often helps us greatly in understanding what is going on, in spite of these interpretation problems. But nothing is perfect in Statistics. There is at least some downside to everything that you try.
+
+</div>
+
+### Review: control charts (1/2)
+
+```{r qc-example}
+suppressMessages(
+  suppressWarnings(
+    library(qcc)))
+suppressMessages(
+  suppressWarnings(
+    library(tidyverse)))
+data(pistonrings)
+diameter = with(pistonrings, qcc.groups(diameter, sample))
+q1 = qcc(diameter[1:25,], type="xbar", newdata=diameter[26:40,])
+plot(q1, chart.all=FALSE)
+```
+
+### Review: control charts (2/2)
+
++ Out of control if:
+  + One point outside of control limits
+  + Eight consecutive points on same side of center line
+  + Other rules(?)
+  
+<div class="notes">
+
+The previous slide showed an example of a control chart for means. The data represents piston ring diameters in an automotive factory. It's important to keep the diameters very very close to 74. The workers on the factory floor measure five diameters every day, compute the average (and the range and standard deviation) for that day and plot it over 40 consecutive days. The workers also measure short term variation, as computed by the range or standard deviation for each day.
+
+Control limits are computed using the average standard deviation or the average range. You may have heard these called the three sigma limits, but you need to be careful, because "sigma" is not an overall standard deviation, but a short term estimate of variation.
+
+The process is said to be out of control if you find one point out of the control limit or eight consecutive points on the same side of the center line.
+
+There are other rules, such as two out three points outside the two sigma limits, four out of five outside the one sigma limits.
+
+</div>
+
+### A common mistake for control charts
+
+```{r mistake}
+
+worker_names <- c(
+  "Dopey",
+  "Doc",
+  "Bashful",
+  "Sneezy",
+  "Happy",
+  "Grumpy",
+  "Sleepy",
+  "Gimli")
+average_ore_produced <- c(36, 25, 26, 10, 5, 29, 0, 20)
+mn <- mean(average_ore_produced)
+data.frame(workers=1:8, average_ore_produced) %>%
+  ggplot(aes(workers, average_ore_produced)) +
+  geom_line() +
+  geom_hline(yintercept=mn) +
+  geom_hline(yintercept=mn+3*5, linetype="dashed") +
+  geom_hline(yintercept=mn-3*5, linetype="dashed") +
+  scale_x_continuous(breaks=1:8, minor_breaks=NULL, labels=worker_names)
+```
+
+### Why is this control chart bad?
+
++ Worker chart has an arbitrary order
+  + Control charts rules depend on a time sequence
+  + Rules optimized for average run length
++ Use ANOM chart instead
+
+<div class="notes">
+
+Most of the decision rules such as
+
+* Eight consecutive points on same size of the centerline
+
+* Two out of three outside two sigma limits
+
+* Four out of five outside one sigma limits
+
+are dependent on the ordering of the data.
+
+But the ordering shown in the previous chart is arbitrary. You could have just as easily arranged the dwarfs names alphabetically and you would end up with the possibly a different interpretation.
+
+</div>
+
+### The ANOM hypothesis
+
++ $$H_0: \mu_i=\mu \ for \ all \ i$$
++ $$H_1: \mu_i \ne \mu \ for \ at  \ least \ one \ i$$
+  + Reject $H_0$ if $\bar{Y}_{i.}-\bar{Y}_{..} > h(1-\alpha, k, n(k-1)) S_p \sqrt{\frac{k-1}{kn}}$
+  + No need to apply any post hoc test
+  
+<div class="notes">
+
+This is the Analysis of Means hypothesis. I'm keeping things simple by assuming that there ar exactly lower-case n values in each of k groups.
+
+You are comparing each mean to the overall mean. This is a slightly different approach than looking at pairs of means, as Analysis of Variance does.
+
+</div>
+
+### An example (1/2)
+
+```{r deviations}
+label_deviation <- c(
+  -0.02386,-0.02853,-0.03001,-0.00428,-0.03623,
+  -0.04222,-0.00144,-0.06466,0.00944,-0.00163,
+  -0.02014,-0.02725,0.02268,-0.03323,0.03661,
+  0.04378,0.05562,0.00977,0.05641,0.01816,
+  -0.00728,0.02849,-0.04404,-0.02214,-0.01394,
+  0.04855,0.03566,0.02345,0.01339,-0.00203,
+  0.06694,0.10729,0.05974,0.06089,0.07551,
+  0.03620,0.05614,0.08985,0.04175,0.05298,
+  0.03677,0.00361,0.03736,0.01164,-0.00741,
+  0.02495,-0.00803,0.03021,-0.00149,-0.04640,
+  0.00493,-0.03839,-0.02037,-0.00487,-0.01202,
+  0.00710,-0.03075,0.00167,-0.02845,-0.00697)
+position <- rep(1:6, each=10)
+cat("Position 1\n")
+for (i in seq(1,9, by=2)) {
+  cat(label_deviation[i:(i+1)])
+  cat("\n")
+}
+```
+
+<div class="notes">
+
+This dataset comes from the SAS QC Guide. It represents deviations in label placement for a bottling machine. There are six different positions for this machine, and you want to find out if the deviations are substantially different for one or more positions.
+
+The deviations for Position 1 are small but mostly negative.
+
+</div>
+
+### An example (2/2)
+
+```{r deviations-2}
+cat("Position 2\n")
+for (i in seq(11,19, by=2)) {
+  cat(label_deviation[i:(i+1)])
+  cat("\n")
+}
+```
+
+<div class="notes">
+
+Here's the data for the second position. There is more of a mix here, and more positive than negative deviations.
+
+I won't show the rest of the raw data, but here is a graph.
+
+</div>
+
+### Graph of the data
+
+```{r initial-graph}
+data.frame(position, label_deviation) -> d
+d %>%
+  ggplot(aes(position, label_deviation)) +
+    geom_point() +
+    scale_x_continuous(
+      breaks=1:6,
+      minor_breaks=NULL)
+```
+
+### Summary statistics
+
+```{r summary}
+d %>%
+  group_by(position) %>%
+  summarize(
+    avg=mean(label_deviation),
+    stdev=sd(label_deviation)) -> su
+su %>%
+  mutate(avg=round(avg, 3)) %>%
+  mutate(stdev=round(stdev, 3)) %>%
+  data.frame
+```
+
+<div class="notes">
+
+Here are the means and standard deviations for each position.
+
+</div>
+
+### Graph means
+
+```{r graph-1}
+su %>%
+  ggplot(aes(x=position, y=avg)) +
+    geom_point() + 
+    scale_x_continuous(
+      breaks=1:6,
+      minor_breaks=NULL) -> g1
+plot(g1)
+```
+
+### Overall mean and pooled standard deviation
+
+```{r overall}
+su %>%
+  mutate(v=stdev^2) %>%
+  summarize(
+    avg=mean(avg),
+    v=mean(v)) %>%
+  mutate(sp=sqrt(v)) %>%
+  select(avg, sp) -> overall
+overall %>%
+  mutate(avg=round(avg, 3)) %>%
+  mutate(sp=round(sp, 3)) %>%
+  data.frame
+h <- 2.72
+```
+
+### Show deviation from overall mean
+
+```{r graph-2}
+g1 +
+  geom_segment(
+      aes(
+        x=position, 
+        y=overall$avg, 
+        xend=position, 
+        yend=avg)) +
+  geom_hline(yintercept=overall$avg) -> g2
+plot(g2)
+```
+
+### Calculate limits
+
+```{r limits}
+lo <- overall$avg-h*overall$sp*sqrt(5/60)
+hi <- overall$avg+h*overall$sp*sqrt(5/60)
+```
+
+$\bar{Y}_{..} \pm h(1-\alpha, k, n(k-1)) S_p \sqrt{\frac{k-1}{kn}}{ }$
+
+`r round(overall$avg, 3)` $\pm$ 2.72 `r round(overall$sp, 3)` $\sqrt{\frac{5}{60}}$
+
+`r round(lo, 3)` to `r round(hi, 3)`
+
+<div class="notes">
+
+Here is the calculation of limits. Anything outside these limits is statistically significantly different than the overall mean.
+
+</div>
+
+### Add limits to the graph
+
+```{r graph-3}
+g2 +
+  geom_hline(yintercept=lo) +
+  geom_hline(yintercept=hi)
+```
+
+### ANOM table
+
+```{}
+     I=2   3    4    5    6  
+df=2 4.30 5.88 6.59 7.10 7.49
+   3 3.18 4.18 4.60 4.92 5.14
+   4 2.78 3.56 3.89 4.12 4.30
+   5 2.57 3.25 3.52 3.72 3.88
+   6 2.45 3.07 3.31 3.49 3.62
+   7 2.36 2.94 3.17 3.33 3.46
+   8 2.31 2.86 3.06 3.22 3.33
+   9 2.26 2.79 2.99 3.13 3.24
+  10 2.23 2.74 2.93 3.07 3.17
+```
+
+<div class="notes">
+
+You can also compute the critical value using a multivariate t-distribution. There are a few complications. First the distribution you are trying to describe represents deviations from an overall mean, so there will be correlations in the data since each group contributes to the overall mean. This correlation, -1/(I-1), is the same for any pair of deviations. Second, the sum of the deviations must equal zero, so this produces a degenerate distribution. This degeneracy means that there is no inverse for the correlation matrix.
+
+In R, there is a library, mvtnorm, that will allow you to compute the percentiles needed for ANOM. Here's an example:
+
+i <- 5
+co <- matrix(-1/(i-1),nrow=i,ncol=i)
+diag(co) <- rep(1,i)
+qmvt(p=0.95,tail="both.tails",corr=co,df=5000)
+
+http://www.pmean.com/07/AnomExample.html
+
+</div>
+
+1A 150 923
+1K 45 298
+1B 34 170
+1D 18 132
+3I 20 106
+3M 12 105
+1E 10 77
+1N 19 74
+1Q 7 69
+3H 11 65
