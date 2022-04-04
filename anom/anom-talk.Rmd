@@ -183,7 +183,7 @@ But the ordering shown in the previous chart is arbitrary. You could have just a
 
 + $$H_0: \mu_i=\mu \ for \ all \ i$$
 + $$H_1: \mu_i \ne \mu \ for \ at  \ least \ one \ i$$
-  + Reject $H_0$ if $\bar{Y}_{i.}-\bar{Y}_{..} > h(1-\alpha, k, n(k-1)) S_p \sqrt{\frac{k-1}{kn}}$
+  + Reject $H_0$ if $\left|\bar{Y}_{i.}-\bar{Y}_{..}\right| > h(1-\alpha, k, n(k-1)) S_p \sqrt{\frac{k-1}{kn}}$
   + No need to apply any post hoc test
   
 <div class="notes">
@@ -390,6 +390,30 @@ g2 +
 
 ### Analysis of means for proportions
 
++ Two extensions
+  + Proportions rather than means
+  + Unequal group sizes
+  
++ Limits
+  + $\bar p \pm m(1-\alpha, k, \infty) \sqrt{\frac{N-n_i}{Nn_i}}$
+  + IMPORTANT!!! Limits change with i
+  
+<div class="notes">
+
+There are several possible extensions of the Analysis of Means model. A very interesting one appears in the same SAS reference. It involves a comparison of the probability of C-section births among a variety of different clinics.
+
+You can use the normal approximation to the binomial distribution and instead of a pooled variance, you use the square root of p-bar times one minus p-bar.
+
+The other extension is the unequal sample sizes. Some clinics only had 3 total births during the study time frame, and one clinic had almost a thousand births. You have to use a different table for unequal sample sizes. I don't have easy access to this table, but you can find it in a book by Nelson.
+
+Peter R. Nelson, Peter S. Wludyka, Karen A. F. Copeland. The Analysis of Means. A Graphical Method for Comparing Means, Rates, and Proportions. ASA-SIAM Series on Statistics and Probability. Siam, Philadelphia PA, ASA, Washington DC, 2005. 
+
+VERY IMPORTANT!!! There is a subscript i in this equation. That means that the limits vary in width. That's to be expected when you have unequal sample sizes.
+
+</div>
+
+### An example
+
 ```{r proportions}
 x <- c(
   "1A",150,923,
@@ -449,6 +473,16 @@ c_section_rates %>%
     minor_breaks=NULL,
     labels=c_section_rates$group) -> p1
 plot(p1)
+
+library(mvtnorm)
+i <- 29
+i <- 28
+for (i in 15:30) {
+co <- matrix(-1/(i-1), nrow=i, ncol=i)
+diag(co) <- rep(1,i)
+print(qmvt(p=0.95, tail="both.tails", corr=co, df=5000))
+}
+
 ```  
 
 <div class="notes">
@@ -456,3 +490,5 @@ plot(p1)
 Here is a plot of the proportions.
 
 </div>
+
+### Calculate limits
