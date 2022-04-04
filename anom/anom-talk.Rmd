@@ -194,6 +194,48 @@ You are comparing each mean to the overall mean. This is a slightly different ap
 
 </div>
 
+### ANOM table
+
+```{}
+     I=2   3    4    5    6  
+df=2 4.30 5.88 6.59 7.10 7.49
+   3 3.18 4.18 4.60 4.92 5.14
+   4 2.78 3.56 3.89 4.12 4.30
+   5 2.57 3.25 3.52 3.72 3.88
+   6 2.45 3.07 3.31 3.49 3.62
+   7 2.36 2.94 3.17 3.33 3.46
+   8 2.31 2.86 3.06 3.22 3.33
+   9 2.26 2.79 2.99 3.13 3.24
+  10 2.23 2.74 2.93 3.07 3.17
+```
+
+<div class="notes">
+
+You need percentiles from a special distribution. You can find tables for this distribution in many places. Here's a small piece of a table that I produced a while back. You can find the full table at 
+
+http://www.pmean.com/07/AnomTable05Part1.html
+
+and 
+
+http://www.pmean.com/07/AnomTable05Part2.html
+
+If you are curious, here are a few details about how I generated this table. I cross checked it against several other tables, by the way.
+
+You compute the critical value using a multivariate t-distribution. There are a few complications. First the distribution you are trying to describe represents deviations from an overall mean, so there will be correlations in the data since each group contributes to the overall mean. This correlation, -1/(I-1), is the same for any pair of deviations. Second, the sum of the deviations must equal zero, so this produces a degenerate distribution. This degeneracy means that there is no inverse for the correlation matrix.
+
+In R, there is a library, mvtnorm, that will allow you to compute the percentiles needed for ANOM. Here's an example to get h(0.95, 5, 15):
+
+i <- 5
+
+co <- matrix(-1/(i-1), nrow=i, ncol=i)
+
+diag(co) <- rep(1,i)
+
+qmvt(p=0.95, tail="both.tails", corr=co, df=15)
+
+
+</div>
+
 ### An example (1/2)
 
 ```{r deviations}
@@ -346,43 +388,71 @@ g2 +
   geom_hline(yintercept=hi)
 ```
 
-### ANOM table
+### Analysis of means for proportions
 
-```{}
-     I=2   3    4    5    6  
-df=2 4.30 5.88 6.59 7.10 7.49
-   3 3.18 4.18 4.60 4.92 5.14
-   4 2.78 3.56 3.89 4.12 4.30
-   5 2.57 3.25 3.52 3.72 3.88
-   6 2.45 3.07 3.31 3.49 3.62
-   7 2.36 2.94 3.17 3.33 3.46
-   8 2.31 2.86 3.06 3.22 3.33
-   9 2.26 2.79 2.99 3.13 3.24
-  10 2.23 2.74 2.93 3.07 3.17
-```
+```{r proportions}
+x <- c(
+  "1A",150,923,
+  "1K",45,298,
+  "1B",34,170,
+  "1D",18,132,
+  "3I",20,106,
+  "3M",12,105,
+  "1E",10,77,
+  "1N",19,74,
+  "1Q",7,69,
+  "3H",11,65,
+  "1R",11,49,
+  "1H",9,48,
+  "3J",7,20,
+  "1C",8,43, 
+  "3B",6,43, 
+  "1M",4,29,
+  "3C",5,28, 
+  "1O",4,27, 
+  "1J",6,22, 
+  "1T",3,22,
+  "3E",4,18, 
+  "1G",4,15, 
+  "3D",4,13, 
+  "3G",1,11,
+  "1L",2,10, 
+  "1I",1,8, 
+  "1P",0,3, 
+  "1F",0,3,
+  "1S",1,3)
+x %>%
+  matrix(ncol=3, byrow=TRUE) %>%
+  data.frame %>%
+  set_names(c("group", "c_sections", "births")) %>%
+  mutate(c_sections=as.numeric(c_sections)) %>%
+  mutate(births=as.numeric(births)) -> raw_data
+head(raw_data)
+```  
 
 <div class="notes">
 
-You can also compute the critical value using a multivariate t-distribution. There are a few complications. First the distribution you are trying to describe represents deviations from an overall mean, so there will be correlations in the data since each group contributes to the overall mean. This correlation, -1/(I-1), is the same for any pair of deviations. Second, the sum of the deviations must equal zero, so this produces a degenerate distribution. This degeneracy means that there is no inverse for the correlation matrix.
-
-In R, there is a library, mvtnorm, that will allow you to compute the percentiles needed for ANOM. Here's an example:
-
-i <- 5
-co <- matrix(-1/(i-1),nrow=i,ncol=i)
-diag(co) <- rep(1,i)
-qmvt(p=0.95,tail="both.tails",corr=co,df=5000)
-
-http://www.pmean.com/07/AnomExample.html
+You can also use the analysis of means methods for proportions and counts. Here's an example of some proportion data. 
 
 </div>
+  
+### Preliminary plot  
 
-1A 150 923
-1K 45 298
-1B 34 170
-1D 18 132
-3I 20 106
-3M 12 105
-1E 10 77
-1N 19 74
-1Q 7 69
-3H 11 65
+```{r p1}
+raw_data %>%
+  mutate(p=c_sections / births) -> c_section_rates
+c_section_rates %>%
+  ggplot(aes(x=1:29, y=p)) +
+  geom_point() + 
+  scale_x_continuous(
+    breaks=1:29,
+    minor_breaks=NULL,
+    labels=c_section_rates$group) -> p1
+plot(p1)
+```  
+
+<div class="notes">
+
+Here is a plot of the proportions.
+
+</div>
