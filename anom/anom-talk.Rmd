@@ -2,11 +2,12 @@
 title: "An introduction to Analysis of Means"
 author: "Steve Simon"
 date: "Created 2022-04-03"
-output: powerpoint_presentation
+output:
+  powerpoint_presentation
 ---
 
 ```{r setup, echo=FALSE}
-knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(echo=FALSE, fig.width=7)
 suppressMessages(
   suppressWarnings(
     library(tidyverse)))
@@ -428,7 +429,6 @@ x <- c(
   "3H",11,65,
   "1R",11,49,
   "1H",9,48,
-  "3J",7,20,
   "1C",8,43, 
   "3B",6,43, 
   "1M",4,29,
@@ -436,6 +436,7 @@ x <- c(
   "1O",4,27, 
   "1J",6,22, 
   "1T",3,22,
+  "3J",7,20,
   "3E",4,18, 
   "1G",4,15, 
   "3D",4,13, 
@@ -473,16 +474,6 @@ c_section_rates %>%
     minor_breaks=NULL,
     labels=c_section_rates$group) -> p1
 plot(p1)
-
-library(mvtnorm)
-i <- 29
-i <- 28
-for (i in 15:30) {
-co <- matrix(-1/(i-1), nrow=i, ncol=i)
-diag(co) <- rep(1,i)
-print(qmvt(p=0.95, tail="both.tails", corr=co, df=5000))
-}
-
 ```  
 
 <div class="notes">
@@ -492,3 +483,106 @@ Here is a plot of the proportions.
 </div>
 
 ### Calculate limits
+
+```{r p-limits}
+library(mvtnorm)
+i <- 29
+co <- matrix(-1/(i-1), nrow=i, ncol=i)
+diag(co) <- rep(1,i)
+x <- qmvt(p=0.95, tail="both.tails", corr=co, df=5000)
+m <- as.numeric(x[1])
+m
+c_section_rates %>%
+  summarize(
+    c_sections=sum(c_sections),
+    births=sum(births)) %>%
+  mutate(pbar=c_sections/births) -> overall
+lo <- 
+  overall$pbar - 
+   h*sqrt(overall$pbar*(1-overall$pbar)) * 
+     sqrt((overall$births-c_section_rates$births) /
+      (overall$births*c_section_rates$births))
+lo <- pmax(lo, 0)
+hi <- 
+  overall$pbar + 
+   h*sqrt(overall$pbar*(1-overall$pbar)) * 
+     sqrt((overall$births-c_section_rates$births) /
+      (overall$births*c_section_rates$births))
+```
+
+### Plot limits
+
+```{r p-graph}
+p1 +
+  expand_limits(y=0:1) +
+  geom_segment(x=(1:29)-0.5, y=lo, xend=(1:29)+0.5, yend=lo) +
+  geom_segment(x=(1:29)-0.5, y=hi, xend=(1:29)+0.5, yend=hi) +
+  geom_segment(x=(1:29)-0.5, y=c(lo[1], hi[-29]), xend=(1:29)-0.5, yend=hi) +
+  geom_segment(x=(1:29)-0.5, y=c(hi[1], lo[-29]), xend=(1:29)-0.5, yend=lo) +
+  geom_segment(x=(1:29)+0.5, y=c(hi[-1], lo[29]), xend=(1:29)+0.5, yend=hi) +
+  geom_segment(x=(1:29)+0.5, y=c(lo[-1], hi[29]), xend=(1:29)+0.5, yend=lo)
+```
+
+### How to handle results
+
++ Negative result implies consistency
+  + But is it consistently bad?
+  + Work on global changes
++ Positive result implies inconsistency
+  + "If you can't be a good example, then you'll just have to be a horrible warning"
+  + Work on local changes
++ Similar advice on control charts
+  
+<div class="notes">
+
+The previous example showed a negative result. None of the C-section proportions was statistically significant. Every group was average.
+
+Boring!
+
+Well, maybe not. If the different medical groups had a similar mix of pregnancies and yet some had significantly higher probabilities for C-sections, then either the groups with the higher probabilities are doing something wrong, or everyone else is doing something wrong.
+
+There is often too much inappropriate variation in the delivery of health care. A negative finding here says that this is not an issue with regard to C-section rates among the varying clinics.
+
+What if you do see one or more statistically significant deviations from the overall average?
+
+There's a well known quote from Catherine Aird, a famous English novelist. Think of the groups that are significantly above average (assuming that larger is better) as shining examples to be emulated. Study what is different about these groups that makes them perform so well. Can other groups learn from their experience.
+
+Think of the groups that are significantly below average as the horrible warnings. Study what is different about these groups, so that you can improve them and/or so that you can avoid those problems in the other groups.
+
+The point to both of these is that any future steps that you take should be local.
+
+</div>
+
+### ANOM contraindications
+
++ Simplicity comes with a price
++ You should not use ANOM 
+  + when searching for the best group
+  + when comparing to a control group
+  + for a reward or punishment system  
+  
+<div class="notes">
+
+You should avoid ANOM in certain settings.
+
+It does not help when you want to identify the best among a group. There would be three or four groups that are all above average, but maybe they are all about the same or maybe one is head and shoulders above the others. Analysis of means cannot distinguish between these very different scenarios.
+
+Pairwise comparisons work well when you are searching for the best. There is also a Bayesian approach that runs repeated simulations of the posterior distribution, ranks the estimated group means, and then estimates the proportion of times that a given group gets the number 1 rank in the simulation.
+
+If there is a control group, your interest should be in deviations from the control group rather than deviations from an overall average. The Dunnett's post hoc comparison in an ANOVA model works well here.
+
+Finally, and possibly the most important point is about rewards and punishments. There is an unfortunate tendency in many workplaces to blame all the quality problems on the workforce. In fact, it is the system that people work in that is most often deserving of blame.
+
+If you use Analysis of Means (or any statistical approach, for that matter) to decide who gets bonuses and who gets fired, you're making a big mistake.
+
+An unusual result for an individual or for a particular work group becomes the start of an investigation. Mindlessly offering rewards and punishments short-circuits the thinking process. I'm not saying that workers are never to blame. I just worry that statistics make it too easy to jump to conclusions.
+
+</div>
+
+### Conclusions
+
++ ANOM compares each group mean to the overall mean
++ It can be applied for proportions or counts as well
++ It has a simple interpretation 
++ It has a simple graphical display
++ Useful for some but not all research settings
