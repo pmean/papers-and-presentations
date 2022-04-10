@@ -396,7 +396,7 @@ g2 +
   + Unequal group sizes
   
 + Limits
-  + $\bar p \pm m(1-\alpha, k, \infty) \sqrt{\frac{N-n_i}{Nn_i}}$
+  + $\bar p \pm m(1-\alpha, k, \infty) \sqrt{\bar p (1-\bar p)} \sqrt{\frac{N-n_i}{Nn_i}}$
   + IMPORTANT!!! Limits change with i
   
 <div class="notes">
@@ -522,6 +522,97 @@ p1 +
   geom_segment(x=(1:29)+0.5, y=c(hi[-1], lo[29]), xend=(1:29)+0.5, yend=hi) +
   geom_segment(x=(1:29)+0.5, y=c(lo[-1], hi[29]), xend=(1:29)+0.5, yend=lo)
 ```
+
+### Examining rates
+
+```{r input-rates}
+clinic <- LETTERS[1:5]
+clinic <- 1:5
+cat_scans <- c(50, 71, 41, 62, 89)
+members <- c(26838, 26895, 26142, 25907, 26565) / 1000
+rates <- data.frame(clinic, cat_scans, members)
+rates
+N <- sum(rates$cat_scans)
+M <- sum(rates$members)
+ubar <- round(N/M, 2)
+rate_per_thousand <- round(cat_scans/members, 2)
+
+lo <- round(
+  ubar - 
+    2.57 * sqrt(ubar) * 
+      sqrt((M-members)/(M*members)), 2)
+hi <- round(
+  ubar + 
+    2.57 * sqrt(ubar) * 
+      sqrt((M-members)/(M*members)), 2)
+```
+
+There are `r N` CAT scans and `r format(M, big.mark=",")` members across all clinics, providing an overall rate of `r ubar` scans per thousand patients.
+
+<div class="notes">
+
+This example is taken from page 46 of a book by Nelson, Wludyka, and Copeland. CAT scans are done at five different clinics. Each clinic serves a different number of members. 
+
+</div>
+
+### Plot of rates
+
+```{r plot-of-rates}
+rates %>%
+  ggplot(aes(x=clinic, y=rate_per_thousand)) +
+    geom_point() +
+    expand_limits(x=c(0.5, 5.5)) +
+    geom_hline(yintercept=ubar) + 
+    geom_segment(x=clinic, y=ubar, xend=clinic, yend=rate_per_thousand) -> uchart
+uchart
+```
+
+### ANOM limits for Poisson rates
+
++ Limits
+  + $\bar u \pm m(1-\alpha, k, \infty) \sqrt{\bar u}\sqrt{\frac{N-n_i}{Nn_i}}$
+  + Note again that the limits change with i
+  
++ Limits for first clinic
+  + `r ubar` $\pm$ 2.57 $\sqrt{`r ubar`} \sqrt{\frac{`r M`-`r members[1]`}{(`r M`)(`r members[1]`)}}$
+  + `r lo[1]` to `r hi[1]`
+  + The rate is `r rate_per_thousand[1]`
+  + This clinic's CAT scan rate is not differnt from the overall CAT scan rate.
+  
+<div class="notes">
+
+
+
+</div>
+
+### Graphical display of ANOM limits
+
+```{r uchart-graph}
+uchart +
+  geom_segment(x=clinic-0.5, y=lo, xend=clinic+0.5, yend=lo) +
+  geom_segment(x=clinic-0.5, y=hi, xend=clinic+0.5, yend=hi)
+```
+
+### Other extensions of ANOM
+
++ ANOM using ranks
++ Multifactor studies
++ Nonparametric approaches
++ Testing variances
+
+<div class="notes">
+
+If you look for applications of analysis of means in the peer reviewed literature and on the web, you'll see some advanced applications. I am not a big fan of these extensions, but perhaps that is just because I have not had a chance to work with them.
+
+Donald Wheeler has developed the analysis of means methodology that uses ranges rather than variances to calculate the limits. This has some appeal to simplicity, as you can calculate a range a lot faster than you can calculate a standard deviation. There is some loss in efficiency, however, by using ranges.
+
+Other applications look at multi-factor settings, and you can run analysis of means charts for main effects and interactions. Most example I have seen only have a small number of levels for each factor, and these examples don't seem to offer much beyond what traditional analysis of variance can already do. It may have more applications in searching for which combinations of factors lead to an interaction.
+
+There are also several nonparametric approaches. Analysis of means does rely on an assumption of normality, but with small sample sizes and skewed data, this can sometimes be problematic.
+
+Another extension is the use of analysis of means to look for groups that have much larger or much smaller variances. You could use this as a check on the homogeneity assumption for an upcoming analysis of variance, but there are already plenty of good tests out there. Further, there is controversy over how you should test for homogeneity or even if you should test for homogeneity. A better application might be examining a process where the mean level is not important, but it is important to have consistency around whatever mean you might have.
+
+</div>
 
 ### How to handle results
 
