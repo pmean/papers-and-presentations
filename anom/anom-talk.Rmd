@@ -37,6 +37,12 @@ https://commons.wikimedia.org/wiki/File:Paint_brushes_(Unsplash).jpg
 
 https://static.wikia.nocookie.net/disney/images/8/8e/Mine.jpg/revision/latest/scale-to-width-down/432?cb=20070709214843
 
+https://journals.lww.com/qmhcjournal/Fulltext/2007/07000/Analysis_of_Means_Used_to_Compare_Providers_.9.aspx?
+
+https://www.researchgate.net/profile/Michele-Gallo/publication/264083231_Measuring_passenger_satisfaction_a_strategy_based_on_Rasch_Analysis_and_the_ANOM/links/0f31753cd851bd4daf000000/Measuring-passenger-satisfaction-a-strategy-based-on-Rasch-Analysis-and-the-ANOM.pdf
+
+
+
 --->
 
 ```{r setup, echo=FALSE}
