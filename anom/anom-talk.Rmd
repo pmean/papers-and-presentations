@@ -6,9 +6,7 @@ output:
   powerpoint_presentation
 ---
 
-<!---
-
-Notes to myself
+### Notes to myself
 
 Revised slides by COB on Thursday.
 
@@ -76,38 +74,69 @@ Analysis of Means (ANOM) is an underappreciated methodology that has relevance t
 
 </div>
 
-### Review: Analysis of Variance
+### ANOM example: Monsoon distribution
 
-+ $$H_0: \mu_i=\mu_j \ for \ all \ i, j$$
-+ $$H_1: \mu_i \ne \mu_j \ for \ at  \ least \ one \ i, j$$
-  + Reject $H_0$ if $F=\frac{MSTR}{MSE} > F(1-\alpha, k-1, N-k)$
-  + Apply post hoc test (e.g., Tukey)
-  
+![Figure 1. Excerpt from research article](images/anom-example-monsoons.png)
+
 <div class="notes">
 
-Let's review the basic Analysis of Variance hypotheses. Let's keep things simple. You have a continuous outcome measured n times in k groups. The null hypothesis is that the population mean is the same for each group. The alternative is that there is at least one pair i,j where the group means differ. You use an F statistic defined as the Mean Square Treatment divided by the Mean Square Error and compare it to a percentile of the F distribution. I won't go into the calculation any more other than to note that if you reject the null hypothesis, you typically apply a post hoc comparison, such as Tukey to identify which pair or pairs differ.
+While analysis of means is not the most common statistic used, it does appear in the peer-reviewed literature often enough.
+
+Here is an example using analysis of means to look at rainfall patterns across different regions of India
 
 </div>
 
-### Interpretation issues with ANOVA (1/4)
+### ANOM example: Physician referrals
 
-![Figure 1. Individual confidence intervals in an ANOVA setting](images/touching-intervals.png)
+![Figure 2. Excerpt from research article](images/anom-example-referral.png)
 
 <div class="notes">
 
-The interpretation of ANOVA models is tricky. Here is an example I am borrowing from a website, Statistics By Jim,
+Here is an example using analysis of means to look at referral patterns in physicians.
+
+</div>
+
+### ANOM example: Laboratory assays
+
+![Figure 3. Excerpt from research article](images/anom-example-selenium.png)
+
+<div class="notes">
+
+Here is an example using analysis of means to look at patterns among different assays for determining selenium concentrations in various biological tissues.
+
+</div>
+
+### Illustrating ANOVA with strength study
+
+![Figure 4. Laboratory measurement of material strength](images/strength-measurement.jpg)
+
+<div class="notes">
+
+To get started with analysis of means, you need an understanding of the two approaches it is similar to: analysis of variance and statistical control charts. Let's start with analysis of variance.
+
+Here is an example I am borrowing from a website, Statistics By Jim,
 
 https://statisticsbyjim.com/anova/post-hoc-tests-anova/
 
-The data represents strength measured for four different batches of materials. Notice how the individual confidence intervals for A and B just barely touch. You can see it better, perhaps on the following graph. You'd be tempted to say that there is no statistically significant difference between batches A and B, but you'd be wrong. The uncertainty associated with individual means does not translate in an additive sense to comparisons between two means. The standard errors are sub-additive, so  two intervals that are only lightly embracing would look different if you computed the confidence interval for the difference.
+A laboratory was studying hardness measures of some materials (arbirarily labelled A, B, C, and D) by compressing them until they break. The researchers measured strength for 6 different pieces of each material, for a total of 24 measurements.
 
-This is ignoring, of course, the issue of multiplicity, but the point is still important to note. The graphical display of individual means and confidence intervals can be misleading.
+There are lots of different ways to measure the strength of a material. I don't know the exact details of how they did it for this study, so I am borrowing an image of strength testing from the NASA Johnson Space Center.
 
 </div>
 
-### Interpretation issues with ANOVA (2/4)
+### Strength study, descriptive statistics
 
-```{r touching-intervals}
+![Figure 5. Means and standard deviations from strength study](images/strength-means.png)
+
+<div class="notes">
+
+Here are the descriptive statistics for the study. You'll note that D has the best value and B the worst, with A and C being in between. There is a small amount of variation in the measurements within a sample, so you might ask whether the differences seen among these means could be accounted for just by sampling error or if there are some differences in the materials. If there are differences, where do they lie?
+
+</div>
+
+### Strength study, individual confidence intervals
+
+```{r touching-intervals, fig.height=1.5}
 x <- c(37.73, 31.57, 35.98, 41.07)
 y <- 1:4
 lo <- c(34.37, 28.20, 32.62, 37.70)
@@ -121,6 +150,7 @@ hi <- c(18.097, 11.931, 16.347, 21.431)
 data.frame(x=x, y=y) %>%
   ggplot(aes(x, y)) +
     expand_limits(x=c(0,30)) +
+    expand_limits(y=c(0.5, 4.5)) +
     geom_point() +
     ylab(" ") +
     geom_segment(x=lo, y=y, xend=hi, yend=y) +
@@ -131,40 +161,83 @@ data.frame(x=x, y=y) %>%
 ggsave("images/anova-interpretation.png")
 ```
 
-![](images/anova-interpretation.png)
+![Figure 6. Display of individual confidence intervals](images/anova-interpretation.png)
 
 <div class="notes">
+
+Here are the individual confidence intervals. The interpretation of these individual intervals is tricky.
+
+First, you can't say anything about the intervals when they overlap. 
 
 You'd be tempted to say that there is no statistically significant difference between batches A and B, but you'd be wrong. The uncertainty associated with individual means does not translate in an additive sense to comparisons between two means. The standard errors are sub-additive, so  two intervals that are only lightly embracing would look different if you computed the confidence interval for the difference.
 
-This is ignoring, of course, the issue of multiplicity, but the point is still important to note. The graphical display of individual means and confidence intervals can be misleading.
+But you also can't say anything about the intervals that don't overlap. The individual have a 95% confidence level, but there are multiple comparisons among them. If you don't adjust for this, you might end up with faulty interpretation.
 
 </div>
 
-### Interpretation issues with ANOVA (3/4)
+### Analysis of Variance hypotheses
 
-![Figure 3. Tukey confidence intervals in an ANOVA setting](images/tukey-intervals.png)
++ $$H_0: \mu_i=\mu_j \ for \ all \ i, j$$
++ $$H_1: \mu_i \ne \mu_j \ for \ at  \ least \ one \ i, j$$
 
 <div class="notes">
 
-Here's another difficulty with interpretation in the ANOVA setting. These are intervals for the difference in means, using a Tukey post hoc adjustment.
+A common approach for this data, and the one illustrated on the Statistics by Jim website is analysis of variance. 
+
+Let's review the basic analysis of variance hypotheses. The null hypothesis is that the population mean is the same for every possible pair i,j. The alternative is that there is at least one pair i,j where the group means differ.
 
 </div>
 
-### Interpretation issues with ANOVA (4/4)
+### Strength study, ANOVA table
 
-![Figure 4. Graphical display of Tukey intervals](images/tukey-graph.png)
+![Figure 7. ANOVA table](images/strength-anova.png)
+
 <div class="notes">
 
-Here is a graphical display of these intervals.  Let's ignore C for the time being. Remember that B is the weakest material, D is the strongest, and A is somewhere in the middle. Looking at these intervals, there is no statistically significant difference between B and A, none between A and D, but there is a statistically significant difference between B and D.
+Here's some output from Jim's website. I think the program he is using is MINITAB, but the output from other packages will look very similar. The key statistic is the p-value, 0.004. Since this difference is small, you conclude that there is at least one pair of materials where there is a statistically significant difference in strength.
+
+</div>
+
+### Strength study, post hoc comparisons
+
+![Figure 8. Graphical display of pairwise comparisons](images/tukey-graph.png)
+
+<div class="notes">
+
+There are several approaches to identifying where the differences lie. Here's a plot showing that the only statistically significant difference is between materials B and D.
+
+This is a bit tricky to interpret. There is no statistically significant difference between the weakest material, B, and the second weakest, C. There's no difference between C and the next material, A. And there is no difference between C and the strongest material, D.
+
+But there is a difference between B and D. It seems a bit weird.
+
+Perhaps the best analogy I can think of is that I live in Kansas City and I have relatives in Denver and Cincinnati. It's not too bad a trip from Kansas City to Denver, and it's not too bad a trip from Kansas City to Cincinnati. But it would be a significant trip to drive all the way from Denver to Cincinnati.
+
+It just is an inherent ambiguity with the analysis of variance. Comparing pairs of means to see which pairs differ will sometimes provide unambiguous interpretations, but often they will not.
 
 Now I don't mean to harp on this point too much. ANOVA is a great technique. It often helps us greatly in understanding what is going on, in spite of these interpretation problems. But nothing is perfect in Statistics. There is at least some downside to everything that you try.
 
 </div>
 
-### Review: control charts (1/2)
+### Illustrating contrl charts with piston ring measurements
 
-```{r qc-example, }
+![Figure 9. Image of piston, cylinder, and piston rings for an automobile engine](images/piston-rings.jpg)
+
+<div class="notes">
+
+Here is an image from Wikipedia
+
+https://commons.wikimedia.org/wiki/File:Piston_rings.jpg
+
+of an automobile engine showing the piston, the cylinder it fits in, and the piston rings which insure a precise fit. With today's engines, you need to size the piston rings very precisely, and if the manufacturing process starts to produce rings that are even just a tiny bit too small or too large, you end up with problems.
+
+</div>
+
+### Piston ring, descriptive statistics.
+
+```{r piston-ring-means}
+suppressMessages(
+  suppressWarnings(
+    library(kableExtra)))
 suppressMessages(
   suppressWarnings(
     library(qcc)))
@@ -173,6 +246,25 @@ suppressMessages(
     library(tidyverse)))
 data(pistonrings)
 diameter = with(pistonrings, qcc.groups(diameter, sample))
+mean_diameter <- apply(diameter, 1, mean)
+std_diameter <- apply(diameter, 1, sd)
+data.frame(
+  Day=1:40, 
+  Mean_diameter=mean_diameter, 
+  Stdev_diameter=std_diameter) %>%
+  kbl %>%
+  kable_styling(full_width=FALSE)
+```
+
+<div class="notes">
+
+In this example, workers regularly monitor the diameters of the piston rings that they produce. It's important to keep the diameters very very close to 74. The workers on the factory floor measure five diameters every day, compute the average and standard deviation for that day
+
+</div>
+
+### Review: control charts (1/2)
+
+```{r qc-example}
 q1 = qcc(diameter[1:25,], type="xbar", newdata=diameter[26:40,])
 png("images/qcc-output.png", width=720, height=480)
 plot(q1, chart.all=FALSE)
@@ -183,7 +275,7 @@ dev.off()
 
 <div class="notes">
 
-This slide shows an example of a control chart for means. The data represents piston ring diameters in an automotive factory. It's important to keep the diameters very very close to 74. The workers on the factory floor measure five diameters every day, compute the average (and the range and standard deviation) for that day and plot it over 40 consecutive days. The workers also measure short term variation, as computed by the range or standard deviation for each day.
+This slide shows an example of a control chart for means.You plot the individual means over 40 consecutive days.
 
 Control limits are computed using the average standard deviation or the average range. You may have heard these called the three sigma limits, but you need to be careful, because "sigma" is not an overall standard deviation, but a short term estimate of variation.
 
