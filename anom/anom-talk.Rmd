@@ -41,6 +41,7 @@ https://static.wikia.nocookie.net/disney/images/8/8e/Mine.jpg/revision/latest/sc
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(
+  comment="",
   echo=FALSE,
   message=FALSE,
   fig.width=7)
