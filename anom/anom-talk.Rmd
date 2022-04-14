@@ -7,6 +7,8 @@ output:
 always_allow_html: true
 ---
 
+<!---
+
 ### Notes to myself
 
 Revised slides by COB on Thursday.
@@ -40,7 +42,7 @@ https://journals.lww.com/qmhcjournal/Fulltext/2007/07000/Analysis_of_Means_Used_
 
 https://www.researchgate.net/profile/Michele-Gallo/publication/264083231_Measuring_passenger_satisfaction_a_strategy_based_on_Rasch_Analysis_and_the_ANOM/links/0f31753cd851bd4daf000000/Measuring-passenger-satisfaction-a-strategy-based-on-Rasch-Analysis-and-the-ANOM.pdf
 
-
+--->
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(
