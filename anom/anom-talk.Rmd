@@ -4,6 +4,7 @@ author: "Steve Simon"
 date: "Created 2022-04-03"
 output:
   powerpoint_presentation
+always_allow_html: true
 ---
 
 ### Notes to myself
@@ -41,13 +42,12 @@ https://www.researchgate.net/profile/Michele-Gallo/publication/264083231_Measuri
 
 
 
---->
-
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(
   comment="",
   echo=FALSE,
   message=FALSE,
+  warning=FALSE,
   fig.width=7)
 suppressMessages(
   suppressWarnings(
@@ -232,12 +232,9 @@ of an automobile engine showing the piston, the cylinder it fits in, and the pis
 
 </div>
 
-### Piston ring, descriptive statistics.
+### Piston ring, descriptive statistics (1/2)
 
 ```{r piston-ring-means}
-suppressMessages(
-  suppressWarnings(
-    library(kableExtra)))
 suppressMessages(
   suppressWarnings(
     library(qcc)))
@@ -246,53 +243,93 @@ suppressMessages(
     library(tidyverse)))
 data(pistonrings)
 diameter = with(pistonrings, qcc.groups(diameter, sample))
-mean_diameter <- apply(diameter, 1, mean)
-std_diameter <- apply(diameter, 1, sd)
+mean_diameter <- round(apply(diameter, 1, mean), 3)
+std_diameter <- round(apply(diameter, 1, sd), 3)
 data.frame(
   Day=1:40, 
   Mean_diameter=mean_diameter, 
-  Stdev_diameter=std_diameter) %>%
-  kbl %>%
-  kable_styling(full_width=FALSE)
+  Stdev_diameter=std_diameter) -> descriptives
+descriptives %>%
+  filter(Day < 7) %>%
+  select(-Day)
 ```
 
 <div class="notes">
 
-In this example, workers regularly monitor the diameters of the piston rings that they produce. It's important to keep the diameters very very close to 74. The workers on the factory floor measure five diameters every day, compute the average and standard deviation for that day
+In this example, workers regularly monitor the diameters of the piston rings that they produce. It's important to keep the diameters very very close to 74. The workers on the factory floor measure five diameters every day, compute the average and standard deviation for that day.
+
+Here are those values for the first few days.
 
 </div>
 
-### Review: control charts (1/2)
+### Piston ring, descriptive statistics (2/2)
+
+```{r piston-ring-means-later}
+descriptives %>%
+  filter(Day > 34) %>%
+  select(-Day)
+```
+
+<div class="notes">
+
+Around day 37 or 38, things start to go bad. 74.02 does not seem that much different than 74, but it is.
+
+</div>
+
+### Control chart rules (1/2)
+
++ Plot the data in time sequence
++ Add control limits at 3 SIGMA
++ Out of control if:
+  + One point outside of 3 SIGMA limits
+  + Two out out three points outside of 2 SIGMA limits
+  + Four out out five points outside of 1 SIGMA limits
+  + Eight points on same side of center line
+  
+<div class="notes">
+
+For a control chart, plot the data in time sequence. This is important.
+
+Add control limits at 3 SIGMA. I deliberately use the term SIGMA because it is not actually a standard deviation across all of the data. SIGMA represents short term variation. There are several ways to compute short term variation, but it is never a straight standard deviation.
+
+</div>
+
+### Control chart rules (2/2)
+
+![Figure 10. Illustration of control chart rules](images/western-electric.png)
+
+<div class="notes">
+
+Here's a graphical illustration of these rules, taken again from the font of all wisdom, Wikipedia.
+
+https://commons.wikimedia.org/wiki/File:Western_electric_rules.svg
+
+</div>
+
+### Piston ring, control chart
 
 ```{r qc-example}
 q1 = qcc(diameter[1:25,], type="xbar", newdata=diameter[26:40,])
 png("images/qcc-output.png", width=720, height=480)
 plot(q1, chart.all=FALSE)
-dev.off()
+bit_bucket <- dev.off()
 ```
 
-![](images/qcc-output.png)
+![Figure 11. Graph of control chart](images/qcc-output.png)
 
 <div class="notes">
 
-This slide shows an example of a control chart for means.You plot the individual means over 40 consecutive days.
-
-Control limits are computed using the average standard deviation or the average range. You may have heard these called the three sigma limits, but you need to be careful, because "sigma" is not an overall standard deviation, but a short term estimate of variation.
+This slide shows an example of a control chart for the piston ring data. It shows trouble starting on day 37.
 
 </div>
 
-### Review: control charts (2/2)
+### A mining illustration
 
-+ Out of control if:
-  + One point outside of control limits
-  + Eight consecutive points on same side of center line
-  + Other rules(?)
-  
+![Figure 12. Seven dwarves from Snow White](images/dwarf-mine.png)
+
 <div class="notes">
 
-The process is said to be out of control if you find one point out of the control limit or eight consecutive points on the same side of the center line.
-
-There are other rules, such as two out three points outside the two sigma limits, four out of five outside the one sigma limits.
+Here is a hypothetical example, looking at the mining output of a famous group of miners. Can anyone name all seven dwarfs?
 
 </div>
 
@@ -324,11 +361,11 @@ data.frame(workers=1:8, average_ore_produced) %>%
 ggsave("images/common-mistake.png", plot=plotx)
 ```
 
-![](images/common-mistake.png)
+![Figure 13. Inappropriate control chart](images/common-mistake.png)
 
 <div class="notes">
 
-Here's a fictional chart showing ore production by eight dwarves. Most of you recognize the first seven names, but does anyone know who "Gimli" is?
+Here's a fictional chart showing ore production by eight dwarves. I added an eight dwarf. Does anyone know who "Gimli" is?
 
 This is drawn like a control chart and uses control chart limits, but it is not a correct application of control chart methodology.
 
@@ -371,6 +408,8 @@ But the ordering shown in the previous chart is arbitrary. You could have just a
 + $$H_0: \mu_i=\mu \ for \ all \ i$$
 + $$H_1: \mu_i \ne \mu \ for \ at  \ least \ one \ i$$
   + Reject $H_0$ if $\left|\bar{Y}_{i.}-\bar{Y}_{..}\right| > h(1-\alpha, k, n(k-1)) S_p \sqrt{\frac{k-1}{kn}}$
++ The h percentile is like a t percentile
+  + Depends on number of groups
   + No need to apply any post hoc test
   
 <div class="notes">
@@ -384,7 +423,7 @@ You are comparing each mean to the overall mean. This is a slightly different ap
 ### ANOM table
 
 ```{}
-     I=2   3    4    5    6  
+     k=2   3    4    5    6  
 df=2 4.30 5.88 6.59 7.10 7.49
    3 3.18 4.18 4.60 4.92 5.14
    4 2.78 3.56 3.89 4.12 4.30
@@ -428,8 +467,11 @@ qmvt(p=0.95, tail="both.tails", corr=co, df=15)
 + What's coming up
   + A simple example
 
+### Label placement 
 
-### An example (1/2)
+![Figure 14. Six labeled bottles of bourbon](images/bottles.jpg)
+
+### Label placement, descriptive statistics
 
 ```{r deviations}
 label_deviation <- c(
@@ -446,63 +488,7 @@ label_deviation <- c(
   0.00493,-0.03839,-0.02037,-0.00487,-0.01202,
   0.00710,-0.03075,0.00167,-0.02845,-0.00697)
 position <- rep(1:6, each=10)
-cat("Position 1\n")
-for (i in seq(1,9, by=2)) {
-  cat(label_deviation[i:(i+1)])
-  cat("\n")
-}
-```
-
-<div class="notes">
-
-This dataset comes from the SAS QC Guide. It represents deviations in label placement for a bottling machine. There are six different positions for this machine, and you want to find out if the deviations are substantially different for one or more positions.
-
-The deviations for Position 1 are small but mostly negative. That means that the label is placed a bit too far to the left, on average.
-
-</div>
-
-### An example (2/2)
-
-```{r deviations-2}
-cat("Position 2\n")
-for (i in seq(11,19, by=2)) {
-  cat(label_deviation[i:(i+1)])
-  cat("\n")
-}
-```
-
-<div class="notes">
-
-Here's the data for the second position. There is more of a mix here, and more positive than negative deviations.
-
-I won't show the rest of the raw data, but here is a graph.
-
-</div>
-
-### Graph of the data
-
-```{r initial-graph}
 data.frame(position, label_deviation) -> d
-d %>%
-  ggplot(aes(position, label_deviation)) +
-    geom_point() +
-    scale_x_continuous(
-      breaks=1:6,
-      minor_breaks=NULL) -> g0
-ggsave("images/label-graph-00.png", plot=g0)
-```
-
-![](images/label-graph-00.png)
-
-<div class="notes">
-
-It looks like positions 1 and 6 are a bit too far to the left, position 4 is a bit too far to the right, and positions 2, 3, and 5 are somewhere in between. Do any of these differ from the overall mean?
-
-</div>
-
-### Summary statistics
-
-```{r summary}
 d %>%
   group_by(position) %>%
   summarize(
@@ -516,11 +502,15 @@ su %>%
 
 <div class="notes">
 
+This dataset comes from the SAS QC Guide. It represents deviations in label placement for a bottling machine. There are six different positions for this machine, and you want to find out if the deviations are substantially different for one or more positions.
+
 Here are the means and standard deviations for each position.
+
+It looks like positions 1 and 6 are a bit too low, position 4 is a bit too high, and positions 2, 3, and 5 are somewhere in between. Do any of these differ from the overall mean?
 
 </div>
 
-### Graph means
+### Label positions, Preliminary graph of means
 
 ```{r graph-1}
 su %>%
@@ -532,7 +522,7 @@ su %>%
 ggsave("images/label-graph-01.png", plot=g1)
 ```
 
-![](images/label-graph-01.png)
+![Figure 15. Plot of mean label position](images/label-graph-01.png)
 
 <div class="notes">
 
@@ -540,7 +530,7 @@ A plot of the position means shows a bit more clearly the pattern I mentioned ea
 
 </div>
 
-### Overall mean and pooled standard deviation
+### Label positions, overall mean and pooled standard deviation
 
 ```{r overall}
 su %>%
@@ -563,7 +553,7 @@ The overall mean and the pooled standard deviation are computed used the standar
 
 </div>
 
-### Show deviation from overall mean
+### Label positions, deviation from overall mean
 
 ```{r graph-2}
 g1 +
@@ -577,7 +567,7 @@ g1 +
 ggsave("images/label-graph-02.png", plot=g2)
 ```
 
-![](images/label-graph-02.png)
+![Figure 16. Plot of deviations from overall mean](images/label-graph-02.png)
 
 <div class="notes">
 
@@ -585,7 +575,7 @@ Draw a horizontal line at the overall mean and show the deviations from the over
 
 </div>
 
-### Calculate limits
+### Label positions, calculate ANOM limits
 
 ```{r limits}
 lo <- overall$avg-h*overall$sp*sqrt(5/60)
@@ -604,22 +594,26 @@ Here is the calculation of limits. Anything outside these limits is statisticall
 
 </div>
 
-### Add limits to the graph
+### Label positions, add limits to graph
 
 ```{r graph-3}
 g2 +
-  geom_hline(yintercept=lo) +
-  geom_hline(yintercept=hi) -> g3
+  geom_hline(
+    yintercept=lo, 
+    linetype="dashed") +
+  geom_hline(
+    yintercept=hi,
+    linetype="dashed") -> g3
 ggsave("images/plot-graph-03.png", plot=g3)
 ```
 
-![](images/plot-graph-03.png)
+![Figure 17. Plot with ANOM limits](images/plot-graph-03.png)
 
 <div class="notes">
 
 Here is the graph with the analysis of means limits. Your intuiton was correct. There are significant deviations to the left in positions 1 and 6 and a significant deviation to the right in position 4.
 
-Now, why would we compare to the overall mean rather than to zero? It depends on the context, but on these assembly lines, there are adjustments that you can make to change the positioning of labels across all positions, and those adjusted will never help you here. Because any overall change to the labels is either going to make positions 1 and 6 worse, or position 4 worse. You need to make interior adjustments rather than global adjustements.
+Now, why would we compare to the overall mean rather than to zero? It depends on the context, but on these assembly lines, there are adjustments that you can make to change the positioning of labels across all positions, and those adjusted will never help you here. Because any overall change to the labels is either going to make positions 1 and 6 worse, or position 4 worse. You need to make interior adjustments rather than global adjustments.
 
 </div>
 
@@ -629,6 +623,22 @@ Now, why would we compare to the overall mean rather than to zero? It depends on
   + A simple example
 + What's coming up
   + Extensions to proportions and counts
+
+### C-sections
+
+![Figure 18. Image of newborn infant](images/infant.jpg)
+
+<div class="notes">
+
+An example involving means rather than proportions can also be found in the SAS QC guide.
+
+A large health care system is examining the rate of C-section births at various locations. All the locations work with low risk births and (in an ideal world) should have the same probability for a C-section birth.
+
+There are a gazillion pictures of newborn infants on the Internet. This image is taken from Wikipedia. By the way, aren't you glad I didn't show the baby DURING the C-section delivery.
+
+https://commons.wikimedia.org/wiki/File:Sleeping_newborn_infant.jpg
+
+</div>
 
 ### Analysis of means for proportions
 
@@ -654,7 +664,7 @@ VERY IMPORTANT!!! There is a subscript i in this equation. That means that the l
 
 </div>
 
-### An example
+### C-sections, first six observations
 
 ```{r proportions}
 x <- c(
@@ -692,7 +702,8 @@ x %>%
   data.frame %>%
   set_names(c("group", "c_sections", "births")) %>%
   mutate(c_sections=as.numeric(c_sections)) %>%
-  mutate(births=as.numeric(births)) -> raw_data
+  mutate(births=as.numeric(births)) %>%
+  mutate(prob=round(c_sections/births, 2)) -> raw_data
 head(raw_data)
 ```  
 
@@ -702,7 +713,13 @@ You can also use the analysis of means methods for proportions and counts. Here'
 
 </div>
   
-### Preliminary plot  
+### C-sections, last six observations
+
+```{r last-six}
+tail(raw_data)
+```
+
+### C-sections, preliminary plot  
 
 ```{r p1}
 raw_data %>%
@@ -716,7 +733,8 @@ pbar <- unlist(overall$pbar)
 
 c_section_rates %>%
   ggplot(aes(x=1:29, y=p)) +
-  geom_point() + 
+  geom_point() +
+  expand_limits(y=0:1) +
   scale_x_continuous(
     breaks=1:29,
     minor_breaks=NULL,
@@ -730,7 +748,7 @@ c_section_rates %>%
 ggsave("images/csection-01.png", plot=p1)
 ```  
 
-![](images/csection-01.png)
+![Figure 19. Plot of C-section proportions](images/csection-01.png)
 
 <div class="notes">
 
@@ -738,7 +756,7 @@ Here is a plot of the proportions. It looks like there are substantial deviation
 
 </div>
 
-### Plot limits
+### C-sections, plot with ANOM limits
 
 ```{r p-limits}
 library(mvtnorm)
@@ -767,11 +785,11 @@ p1 +
   geom_segment(x=(1:29)-0.5, y=c(lo[1], hi[-29]), xend=(1:29)-0.5, yend=hi) +
   geom_segment(x=(1:29)-0.5, y=c(hi[1], lo[-29]), xend=(1:29)-0.5, yend=lo) +
   geom_segment(x=(1:29)+0.5, y=c(hi[-1], lo[29]), xend=(1:29)+0.5, yend=hi) +
-  geom_segment(x=(1:29)+0.5, y=c(lo[-1], hi[29]), xend=(1:29)+0.5, yend=lo) +    expand_limits(y=0:1) -> p2
+  geom_segment(x=(1:29)+0.5, y=c(lo[-1], hi[29]), xend=(1:29)+0.5, yend=lo) -> p2
 ggsave("images/csection-02.png", plot=p2)
 ```
 
-![](images/csection-02.png)
+![Figure 20. Plot of C-secton proportions with ANOM limits](images/csection-02.png)
 
 <div class="notes">
 
@@ -779,7 +797,17 @@ I won't show the actual calculations here, but they are tedious rather than diff
 
 </div>
 
-### Examining rates
+### CAT scans
+
+![Figure 21. Image of CAT scan machine](images/cat-scan.jpg)
+
+<div class="notes">
+
+The last example is a comparison of rates of utilization of CAT scan machines. These machines are very expensive, and the hospital system wants to make sure that they are not being under-utilized for economic reasons. Over-utilization is also a problem, as it indicates that this diagnostic tool is being used too often and, perhaps, inappropriately. 
+
+</div>
+
+### Cat scans, raw data
 
 ```{r input-rates}
 clinic <- LETTERS[1:5]
@@ -787,7 +815,9 @@ clinic <- 1:5
 cat_scans <- c(50, 71, 41, 62, 89)
 members <- c(26838, 26895, 26142, 25907, 26565) / 1000
 rates <- data.frame(clinic, cat_scans, members)
-rates
+rates %>%
+  select(-clinic) %>%
+  mutate(rate=round(cat_scans/members, 2))
 N <- sum(rates$cat_scans)
 M <- sum(rates$members)
 ubar <- round(N/M, 2)
@@ -803,15 +833,19 @@ hi <- round(
       sqrt((M-members)/(M*members)), 2)
 ```
 
-There are `r N` CAT scans and `r format(M, big.mark=",")` thousand members across all clinics, providing an overall rate of `r ubar` scans per thousand patients.
-
 <div class="notes">
 
 One last example. This example is taken from page 46 of a book by Nelson, Wludyka, and Copeland. CAT scans are done at five different clinics. Each clinic serves a different number of members. 
 
 </div>
 
-### Plot of rates
+### CAT scans, overall rates
+
+There are `r N` CAT scans and `r format(M, big.mark=",")` thousand members across all clinics, providing an overall rate of `r ubar` scans per thousand patients.
+
+
+
+### CAT scans, plot of rates
 
 ```{r plot-of-rates}
 rates %>%
@@ -824,7 +858,7 @@ rates %>%
 ggsave("images/cat-01.png", plot=uchart1)
 ```
 
-![](images/cat-01.png)
+![Figure 22. Plot of CAT scan utilization rates](images/cat-01.png)
 
 <div class="notes">
 
@@ -832,7 +866,7 @@ Here are the plots of CAT scan rates. Notice that clinics 1 and 3 have lower rat
 
 </div>
 
-### ANOM limits for Poisson rates
+### Analysis of means for rates
 
 + Limits
   + $\bar u \pm m(1-\alpha, k, \infty) \sqrt{\bar u}\sqrt{\frac{N-n_i}{Nn_i}}$
@@ -852,7 +886,7 @@ The formulas here are very similar to control limits on a C-chart or a U-chart.
 
 </div>
 
-### Graphical display of ANOM limits
+### CAT scans, display with ANOM limits
 
 ```{r uchart-graph}
 uchart1 +
@@ -861,7 +895,7 @@ uchart1 +
 ggsave("images/cat-02.png", plot=uchart2)
 ```
 
-![](images/cat-02.png)
+![Figure 23. Plot of CAT scan utilization rates with ANOM limits](images/cat-02.png)
 
 <div class="notes">
 
