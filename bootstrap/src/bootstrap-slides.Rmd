@@ -1,0 +1,218 @@
+---
+title: "A gentle introduction to the bootstrap"
+author: "Steve Simon"
+date: "Created 2022-07-13"
+output: powerpoint_presentation
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Outline
+
++ History
+  + The jackknife
+  + Bradley Efron's work
+  + Bagging
++ Purpose
+  + Estimate bias
+  + Calculate standard errors
+  + Compute confidence intervals
+  + Test hypotheses
++ Resampling mechanics
++ Calculations
+  + Bias
+  + Standard error
+  + Percentile confidence interval
+  + Bias corrected intervals
++ Software
+  + SAS
+  + Stata
+  + R
+
+<div class="notes">
+
+Here is the abstract that I provided. I am including it here to remind myself what I promised to talk about.
+
+The bootstrap is a methodology derived by Bradley Efron in the 1980s that provides a reasonable approximation to the sampling distribution of various "difficult" statistics. Difficult statistics are those where there is no mathematical theory to establish a distribution. It is also useful when you don't trust the mathematical theory because of a small sample size or potential violations of the underlying assumptions. The bootstrap is also a mechanism used by many machine learning algorithms to avoid overfitting. This talk will orient you to the general mechanisms of the bootstrap algorithm and illustrate its application in a couple of simple settings.
+
+This talk will cover four major areas.
+
+First, I will provide a historical overview, starting with a simpler method that the bootstrap was based on called the jackknife. Then I will talk about Bradlet Efron's work to develop the bootstrap and establish its theoretical foundations. Then I will mention how bootstrapping has developed into a methodology used in machine learning called bagging.
+
+Next, I will explain the reasons why you might want to use the bootstrap: to estimate bias, calculate standard errors, compute confidence intervals, and test hypotheses.
+
+I will illustrate the mechanics of the bootstrap and show briefly how to implement the bootstrap in SAS, Stata, and R.
+
+
+
++ Purpose
+  + Estimate bias
+  + Calculate standard errors
+  + Compute confidence intervals
+  + Test hypotheses
++ Calculations
+  + Bias
+  + Standard error
+  + Percentile confidence interval
+  + Bias corrected intervals
++ Software
+  + SAS
+  + Stata
+  + R
+
+
+</div>
+
+### History of the bootstrap
+
++ The jackknife
++ Bradley Efron's contributions
++ Recent application: bagging
+
+<div class="notes">
+
+
+
+</div>
+
+### The jackknife (1/3)
+
+$X\ \ \ \ \ \  = (2,3,7,5,6)$
+
+$\ $
+
+$X^{(-1)} = (\ \ ,3,7,5,6)$
+
+$X^{(-2)} = (2,\ \ ,7,5,6)$
+
+$X^{(-3)} = (2,3,\ \ ,5,6)$
+
+$X^{(-4)} = (2,3,7,\ \ ,6)$
+
+$X^{(-5)} = (2,3,7,5,\ \ )$
+
+<div class="notes">
+
+The jackknife, as called the "leave-one-out" method was proposed in 1949 as a method for estimating bias and calculating standard errors by Quenouille. It got the name "jackknife" by John Tukey because he felt it was a useful tool for a variety of settings.
+
+You create subsamples by leaving one data point out. With five data points, you have five subsamples.
+
+</div>
+
+### The jackknife (2/3)
+
+```{r}
+mad <- function(u) {mean(abs(u-mean(u)))}
+
+x <- c(2,3,7,5,6)
+m0 <- mad(x)
+m1 <- mad(x[-1])
+m2 <- mad(x[-2])
+m3 <- mad(x[-3])
+m4 <- mad(x[-4])
+m5 <- mad(x[-5])
+mn <- mean(c(m1, m2, m3, m4, m5))
+sn <- sd(c(m1, m2, m3, m4, m5))
+```
+
+$MAD(X)=\frac{1}{n}\Sigma|X_i-\bar{X}|$
+
+$\ $
+
+$MAD$ (`r paste(x, sep=",")`) = `r m0` 
+
+### The jackknife (3/3)
+
+$\ $
+
+$MAD$ (`r paste(x[-1], sep=",")`) = `r m1` 
+
+$MAD$ (`r paste(x[-2], sep=",")`) = `r m2` 
+
+$MAD$ (`r paste(x[-3], sep=",")`) = `r m3` 
+
+$MAD$ (`r paste(x[-4], sep=",")`) = `r m4` 
+
+$MAD$ (`r paste(x[-5], sep=",")`) = `r m5` 
+
+### The jackknife (4/4)
+
++ MAD (Full sample) = `r m0`
++ Average MAD (Jackknife subsamples) = `r mn`
++ Estimated bias = `r m0 - mn`
++ Standard deviation MAD (Jackknife subsamples) = `r round(sn, 3)`
+
+### Bradley Efron
+
+![Figure 1. Photograph of Bradley Efron with President Bush](../images/bradley-efron-02.jpg)
+
+<div class="notes">
+
+The bootstrap was developed by Bradley Efron while a PhD candidate at Stanford in the 1960s.
+
+</div>
+
+### Bagging
+
+### Break #1
+
++ What have you learned
+  + History of the bootstrap
++ What's coming next
+  + Reasons for using the bootstrap
+  
+### Reasons for using the bootstrap
+
++ Estimate bias
++ Calculate standard errors
++ Compute confidence intervals
++ Test hypotheses
+
+### Estimate bias
+
+### Calculate standard errors
+
+### Compute confidence intervals
+
+### Test hypotheses
+
+### Break #2
+
++ What you have learned
+  + Purposes of the bootstrap
++ What's coming next
+  + Mechanics
+  
+### Mechanics
+
++ Resampling
++ Bootstrap estimates
++ Bias calculation
++ Standard error calculation
++ Confidence interval
+  + Percentile method
+  + Bias corrected and adjusted method
++ Hypothesis tests
+
+### Break #3
+
++ What have you learned
+  + Mechanics
++ What's coming next
+  + Software
+  
+### Software
+
+### Special issues
+
++ Time series
++ Regression models
+
+### Summary
+
++ History
++ Purpose
++ Calculations
++ Software
