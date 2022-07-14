@@ -7,6 +7,11 @@ output: powerpoint_presentation
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+suppressMessages(
+  suppressWarnings(
+    library(ggplot2)
+  )
+)
 ```
 
 ### Outline
@@ -67,13 +72,86 @@ I will illustrate the mechanics of the bootstrap and show briefly how to impleme
 
 ### History of the bootstrap
 
++ Can you rely on asymptotic normality?
 + The jackknife
 + Bradley Efron's contributions
 + Recent application: bagging
 
 <div class="notes">
 
+I want to provide a bit of historical context. Before the bootstrap came along, researchers relied on a variety of mathematical theorems like the Central Limit Theorem and extensions to the Central Limit Theorem to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses.
 
+The bootstrap represents an early attempt to use the power of computer simulation to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses. The bootstrap provides these answers in many settings where you can't find a variation on the Central Limit Theorem that would apply or when you don't trust the approximation. I'll provide a brief overview of the jackknife, an earlier approach that the bootstrap was based on. Then I'll talk about Bradley Efron's work in the 1970's and 1980's to develop the bootstrap and to establish the mathematical principles that make the bootstrap work in so many different areas. Finally, I will talk about how bootstrapping came to be relied on in various machine learning algorithms.
+
+</div>
+
+### Can we rely on asymptotic normality? (1/4)
+
+![Figure 1. Cover of book by Robert Serfling](../images/serfling-book-cover.jpg)
+
+<div class="notes">
+
+I need to start with a book that I used when I was in graduate school. The title is "Approximation Theorems in Mathematical Statistics" by Rboery Serfling. It was all about the variety of ways to show that some statistic followed an asymptotic normal distribution.
+
+</div>
+
+### Can we rely on asymptotic normality? (2/4)
+
+$\bar{X}=\frac{1}{n}\Sigma X_i$ is approximately normal if
+
++ The $X_i$ all come from the same distribution
++ The $X_i$'s are all independent
++ The $X_i$ have a finite second moment
+
+A more precise statement
+
++ $lim_{n \to \infty}\  \frac{\bar{X}-\mu}{\sigma / \sqrt{n}} = N(0,1)$
+
+<div class="notes">
+
+I'm sure you're all familiar with the Central Limit Theorem. It states that the average of independent identically distributed random variables is approximately normal.
+
+The rule of thumb is that you can trust the normal approximation when the sample size is greater than 30. There is a lot that you can quibble about with respect to the cut-off of 30, but we're not going to get too fussy about this.
+
+</div>
+
+### Can we rely on asymptotic normality? (3/4)
+
+Furthermore,
+
+$E[\bar{X}]=\mu$
+
+$Var(\bar{X})=\frac{\sigma^2}{n}$
+
+<div class="notes">
+
+You can also show easily that the expected value of the sample mean is mu (the sample mean is an unbiased estimate of the population mean) and that the variance of the sample mean is the variance of an individual X value divided by the sample size n.
+
+</div>
+
+### Can we rely on asymptotic normality? (4/4)
+
+What about: 
+
+$MAD(X)=\frac{1}{n}\Sigma|X_i-\bar{X}|$ 
+
+$IQR = X_{.75}-X_{.25}$
+
+$n < 30$
+
+<div class="notes">
+
+What about more complex settings?
+
+What if the sample size is not large enough to rely on the Central Limit Theorem?
+
+What if you are measuring the mean absolute deviation (the average of the absolute values of each individual value minus the sample mean) or the interquartile range (the difference between the 75th percentile and the 25th percentile).
+
+If you are really clever and if you understand all the approximation theorems in Robert Serfling's book, you will know how to establish an approximation to these statistics (usually a normal approximation, but sometimes there are other distributions like the chi-square distribution that represent a good approximation).
+
+But an even more fundamental question is what do you do when the sample size is not large enough to justify the use of the Central Limit Theorem? I put down n<30 here, but in some settings (well behaved distributions without much skewness and only a weak tendency to produce outliers), you might get by with only 10 observations. Other times (extremely skewed distributions and/or a strong tendency to produce outliers), even a sample size of 300 is inadequate to assume an approximately normal distribution.
+
+It turns out that you can use simulations involving the data itself to establish an underlying distribution.
 
 </div>
 
@@ -117,13 +195,7 @@ mn <- mean(c(m1, m2, m3, m4, m5))
 sn <- sd(c(m1, m2, m3, m4, m5))
 ```
 
-$MAD(X)=\frac{1}{n}\Sigma|X_i-\bar{X}|$
-
-$\ $
-
-$MAD$ (`r paste(x, sep=",")`) = `r m0` 
-
-### The jackknife (3/3)
+$MAD$ (`r paste(x, sep=",")`) = `r m0`
 
 $\ $
 
@@ -137,24 +209,109 @@ $MAD$ (`r paste(x[-4], sep=",")`) = `r m4`
 
 $MAD$ (`r paste(x[-5], sep=",")`) = `r m5` 
 
-### The jackknife (4/4)
+<div class="notes">
+
+### The jackknife (3/3)
 
 + MAD (Full sample) = `r m0`
 + Average MAD (Jackknife subsamples) = `r mn`
-+ Estimated bias = `r m0 - mn`
 + Standard deviation MAD (Jackknife subsamples) = `r round(sn, 3)`
 
-### Bradley Efron
+### Bradley Efron's contribution (1/5)
 
 ![Figure 1. Photograph of Bradley Efron with President Bush](../images/bradley-efron-02.jpg)
 
 <div class="notes">
 
-The bootstrap was developed by Bradley Efron while a PhD candidate at Stanford in the 1960s.
+This image is from a White House ceremony where Bradley Efron received the President's National Medal of Science. I was quite shocked when I found this picture a few days ago, and I've been trying to call Joe Biden ever since to see where my medal is. Seriously, you have to be a really special statistician to deserve an honor like this.
+
+Most of the information about Bradley Efron comes from
+
+Denise LaFontaine. The History of Bootstrapping: Tracing the Development of Resampling With Replacement. The Mathematics Enthusiast 2021, 18(1). Available in [pdf format][laf1].
+
+[laf1]: https://scholarworks.umt.edu/cgi/viewcontent.cgi?article=1515&context=tme
+
+Bradley Efron entered the PhD program in Statistics at Stanford University in 1960. He was influenced by one of the faculty at Stanford, Rupert Miller, who was working on establishing conditions under which the jackknife did or did not perform well. Shortly after graduating, Dr. Efron started working on an approach that would fix some of the shortcomings of the jackknife.
+
+</div>
+
+### Bradley Efron's contribution (2/5)
+
+The bootstrap sample=sampling with replacement.
+
+```{r}
+set.seed(1245)
+b1 <- matrix(sample(x, 2500, replace=TRUE), nrow=500)
+m <- apply(b1, 1, mad)
+mn <- mean(m)
+sn <- sd(m)
+```
+
+Bootstrap sample #1: (`r paste(b1[1, ], sep=",")`)
+
+Bootstrap sample #2: (`r paste(b1[2, ], sep=",")`)
+
+Bootstrap sample #3: (`r paste(b1[3, ], sep=",")`)
+
+...
+
+Bootstrap sample #500: (`r paste(b1[500, ], sep=",")`)
+
+### Bradley Efron's contribution (3/5)
+
+MAD(`r paste(b1[1, ], sep=",")`) = `r m[1]`
+
+MAD(`r paste(b1[2, ], sep=",")`) = `r m[2]`
+
+MAD(`r paste(b1[3, ], sep=",")`) = `r m[3]`
+
+...
+
+MAD(`r paste(b1[500, ], sep=",")`) = `r m[500]`
+
+### Bradley Efron's contribution (4/5)
+
++ MAD (Full sample) = `r m0`
++ Average MAD (Bootstrap samples) = `r round(mn, 3)`
++ Standard deviation MAD (Bootstrap samples) = `r round(sd(m), 3)`
+
+### Bradley Efron's contribution (5/5)
+
+```{r}
+g1 <- ggplot(data.frame(m=m), aes(x=m)) + 
+  geom_histogram(binwidth=0.1)
+ggsave("../images/histogram01.png", g1, width=6, height=6, units = "in")
+```
+
+![Figure 1. Histogram of bootstrapped estimates](../images/histogram01.png)
+
+<div class="notes">
+
+This is a histogram of the 500 bootstrapped estimates of the mean absolute deviation. Notice that it is "patchy" and does not follow a smooth bell shaped curve. This is an important issue that we will address when computing confidence intervals.
 
 </div>
 
 ### Bagging
+
++ Portmanteau for bootstrap aggregation
++ Developed by Leo Breiman in 1996
++ Start with CART model
+  + Classification And Regression Tree
+
+<div class="notes">
+
+I want to briefly address an important application of the bootstrap to machine learning.
+
+</div>
+
+### Bagging
+
+
+![Figure 1. Illustration of a regression tree](../images/regression-tree.png)
+
+### Bagging
+
+![Figure 1. Image of a classification tree](../images/classification-tree.jpg)
 
 ### Break #1
 
