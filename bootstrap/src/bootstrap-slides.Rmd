@@ -97,7 +97,7 @@ I need to start with a book that I used when I was in graduate school. The title
 
 ### Can we rely on asymptotic normality? (2/4)
 
-$\bar{X}=\frac{1}{n}\Sigma X_i$ is approximately normal if
+$\bar{X}=\frac{1}{n}\sum_{i=1}^{n} X_i$ is approximately normal if
 
 + The $X_i$ all come from the same distribution
 + The $X_i$'s are all independent
@@ -133,9 +133,13 @@ You can also show easily that the expected value of the sample mean is mu (the s
 
 What about: 
 
-$MAD(X)=\frac{1}{n}\Sigma|X_i-\bar{X}|$ 
+$MAD(X)=\frac{1}{n}\sum_{i=1}^{n}|X_i-\bar{X}|$ 
+
+$\ $
 
 $IQR = X_{.75}-X_{.25}$
+
+$\ $
 
 $n < 30$
 
@@ -301,7 +305,7 @@ This is a histogram of the 500 bootstrapped estimates of the mean absolute devia
 
 </div>
 
-### Bagging
+### Bagging (1/4)
 
 + Portmanteau for bootstrap aggregation
   + Used in random forests
@@ -317,7 +321,7 @@ The basic building block for bagging in the random forest model is the CART mode
 
 </div>
 
-### Bagging
+### Bagging (2/4)
 
 
 ![Figure 1. Illustration of a regression tree](../images/regression-tree.png)
@@ -334,7 +338,7 @@ The graph shows a prediction model for baseball player salaries. If the numbers 
 
 </div>
 
-### Bagging
+### Bagging (3/4)
 
 ![Figure 1. Image of a classification tree](../images/classification-tree.jpg)
 
@@ -347,13 +351,36 @@ This is an example from the [Wikipedia page on decision tree learning][wik1]. It
 [wik1]: https://en.wikipedia.org/wiki/Decision_tree_learning
 [wik2]: https://commons.wikimedia.org/w/index.php?curid=90405437
 
+Both classification trees and regression trees have a tendency to overfit the data. They are also highly sensitive to small changes in the data. In fact, I would have a hard time recommending the use of these models at all.
 
+There is an approach, however, that largely overcomes these concerns. It is called an ensemble approach. You combine multiple regression or classification trees into a "forest." And you do this with the help of the bootstrap.
 
 </div>
 
-### Bagging
+### Bagging (4/4)
 
-In bagging, you fit a 
+Bootstrap sample b=1: CART model predictions, $\hat{Y}_{(1)}$
+
+Bootstrap sample b=2: CART model predictions, $\hat{Y}_{(2)}$
+
+Bootstrap sample b=3: CART model predictions, $\hat{Y}_{(3)}$
+
+...
+
+Bootstrap sample b=B: CART model predictions, $\hat{Y}_{(B)}$
+
+Final prediction: $\frac{1}{B}\sum_{b=1}^B \ \hat{Y}_b$
+
+
+<div class="notes">
+
+In bagging, you fit a model (in the case of Random Forests, you fit a CART model) to a few hundred or thousand bootstrap samples. Get predicted values for each model. Average those predicted values across all the bootstrap samples.
+
+There are some additional enhancements to the Random Forest models, but the key element is the bagging step.
+
+Note: Each bootstrap sample might produce a different set of independent variables, so you can't say anything directly about which variables help the most in predicting the outcome. You can't get p-values or confidence intervals for individual independent variables. There are some indirect ways to assess this, but I will not talk about these.
+
+</div>
 
 ### Break #1
 
@@ -370,6 +397,15 @@ In bagging, you fit a
 + Test hypotheses
 
 ### Estimate bias
+
++ $\hat\theta=\hat\theta(X_1, X_2,..., X_n)$ is an estimate of $\theta$.
++ Recalculate for B bootstrap samples
+  + $\hat\theta^{(1)}=\hat\theta(X^(1)_1,X^(1)_2,...,X^(1)_n)$
+  + $\hat\theta^{(2)}=\hat\theta(X^(2)_1,X^(2)_2,...,X^(2)_n)$
+  + ...
+  + $\hat\theta^{(B)}=\hat\theta(X^(B)_1,X^(B)_2,...,X^(B)_n)$
++ Compare the bootstrap average to the original estimate
+  + $\frac{1}{B}\sum_{b=1}^{B}\hat\theta^{(b)}-\hat\theta$
 
 ### Calculate standard errors
 
