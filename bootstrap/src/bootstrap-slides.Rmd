@@ -155,7 +155,17 @@ It turns out that you can use simulations involving the data itself to establish
 
 </div>
 
-### The jackknife (1/3)
+### The jackknife (1/4)
+
+![Figure 1. Image of a jackknife](../images/jackknife-image.png)
+
+<div class="notes">
+
+The jackknife was first developed in 1949 by Maurice Quenouille and was extended to a more general setting by John Tukey in the 1950s. Dr. Tukey was fond of giving clever names to various statistical terms. He was the one, for example, who coined the term "bit" as a shorted form of binary digit. He chose the name "jackknife" for the Quenouille approach because the jackknife is an all-purpose tool.
+
+</div>
+
+### The jackknife (2/4)
 
 $X\ \ \ \ \ \  = (2,3,7,5,6)$
 
@@ -179,7 +189,7 @@ You create subsamples by leaving one data point out. With five data points, you 
 
 </div>
 
-### The jackknife (2/3)
+### The jackknife (3/4)
 
 ```{r}
 mad <- function(u) {mean(abs(u-mean(u)))}
@@ -211,7 +221,7 @@ $MAD$ (`r paste(x[-5], sep=",")`) = `r m5`
 
 <div class="notes">
 
-### The jackknife (3/3)
+### The jackknife (4/4)
 
 + MAD (Full sample) = `r m0`
 + Average MAD (Jackknife subsamples) = `r mn`
@@ -294,13 +304,16 @@ This is a histogram of the 500 bootstrapped estimates of the mean absolute devia
 ### Bagging
 
 + Portmanteau for bootstrap aggregation
+  + Used in random forests
 + Developed by Leo Breiman in 1996
 + Start with CART model
   + Classification And Regression Tree
 
 <div class="notes">
 
-I want to briefly address an important application of the bootstrap to machine learning.
+I want to briefly address an important application of the bootstrap to machine learning. Bagging is a portmanteau, a combination and shortening of two words: bootstrap aggregation.
+
+The basic building block for bagging in the random forest model is the CART model, Classification and Regression Trees.
 
 </div>
 
@@ -309,9 +322,38 @@ I want to briefly address an important application of the bootstrap to machine l
 
 ![Figure 1. Illustration of a regression tree](../images/regression-tree.png)
 
+<div class="notes">
+
+A regression tree is a model used for continuous outcomes. It finds optimal splits of the data that create subgroups where the outcome variable shows very little variation. This is an example from the Statology blog on how to fit CART models.
+
+Zach Bobbitt. How to Fit Classification and Regression Trees in R. Statology blog, 2020-11-22. Available in [html format][bobb1].
+
+[bobb1]: https://www.statology.org/classification-and-regression-trees-in-r/
+
+The graph shows a prediction model for baseball player salaries. If the numbers seem low, it is because the data comes form 1987. The first split is between years in the league. If it is less than 4.5, the node to the left shows a mean salary of 225.83 thousand dollars. If it is greater than 4.5, the node to the right shows an additional split: were the number of home runs less than 16.5, then another split is the number of home runs also less than 8.5 then the mean salary is 502.81 thousand dollars. I won't go through every branch, but each of the final nodes is a combination of splits involving years in the league or home runs.
+
+</div>
+
 ### Bagging
 
 ![Figure 1. Image of a classification tree](../images/classification-tree.jpg)
+
+<div class="notes">
+
+This is an example of a classification tree. You use a classification tree when you are predicting a binary outcome.
+
+This is an example from the [Wikipedia page on decision tree learning][wik1]. It is work by Gilgoldm and published under a Creative Commons open source license (CC BY-SA 4.0) and is available for download [here][wik2].
+
+[wik1]: https://en.wikipedia.org/wiki/Decision_tree_learning
+[wik2]: https://commons.wikimedia.org/w/index.php?curid=90405437
+
+
+
+</div>
+
+### Bagging
+
+In bagging, you fit a 
 
 ### Break #1
 
