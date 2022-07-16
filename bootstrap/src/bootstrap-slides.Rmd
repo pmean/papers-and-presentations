@@ -9,7 +9,7 @@ output: powerpoint_presentation
 knitr::opts_chunk$set(echo = FALSE)
 suppressMessages(
   suppressWarnings(
-    library(ggplot2)
+    library(tidyverse)
   )
 )
 ```
@@ -20,21 +20,9 @@ suppressMessages(
   + The jackknife
   + Bradley Efron's work
   + Bagging
-+ Purpose
-  + Estimate bias
-  + Calculate standard errors
-  + Compute confidence intervals
-  + Test hypotheses
-+ Resampling mechanics
 + Calculations
-  + Bias
-  + Standard error
-  + Percentile confidence interval
-  + Bias corrected intervals
 + Software
-  + SAS
-  + Stata
-  + R
++ Examples
 
 <div class="notes">
 
@@ -44,28 +32,13 @@ The bootstrap is a methodology derived by Bradley Efron in the 1980s that provid
 
 This talk will cover four major areas.
 
-First, I will provide a historical overview, starting with a simpler method that the bootstrap was based on called the jackknife. Then I will talk about Bradlet Efron's work to develop the bootstrap and establish its theoretical foundations. Then I will mention how bootstrapping has developed into a methodology used in machine learning called bagging.
+First, I will provide a historical overview, starting with a simpler method that the bootstrap was based on called the jackknife. Then I will talk about Bradley Efron's work to develop the bootstrap and establish its theoretical foundations. Then I will mention how bootstrapping has developed into a methodology used in machine learning called bagging.
 
 Next, I will explain the reasons why you might want to use the bootstrap: to estimate bias, calculate standard errors, compute confidence intervals, and test hypotheses.
 
 I will illustrate the mechanics of the bootstrap and show briefly how to implement the bootstrap in SAS, Stata, and R.
 
-
-
-+ Purpose
-  + Estimate bias
-  + Calculate standard errors
-  + Compute confidence intervals
-  + Test hypotheses
-+ Calculations
-  + Bias
-  + Standard error
-  + Percentile confidence interval
-  + Bias corrected intervals
-+ Software
-  + SAS
-  + Stata
-  + R
+Then I will show two simple examples.
 
 
 </div>
@@ -396,7 +369,7 @@ Note: Each bootstrap sample might produce a different set of independent variabl
 + Compute confidence intervals
 + Test hypotheses
 
-### Estimate bias
+### Evaluate estimates on bootstrapped samples
 
 + $\hat\theta=\hat\theta(X_1, X_2,..., X_n)$ is an estimate of $\theta$.
 + Recalculate for B bootstrap samples
@@ -404,12 +377,171 @@ Note: Each bootstrap sample might produce a different set of independent variabl
   + $\hat\theta^{(2)}=\hat\theta(X^(2)_1,X^(2)_2,...,X^(2)_n)$
   + ...
   + $\hat\theta^{(B)}=\hat\theta(X^(B)_1,X^(B)_2,...,X^(B)_n)$
+
+<div class="notes">
+
+For all of the proposed uses of the bootstrap, you start with an estimate based on the full dataset. Call that estimate theta-hat.
+
+Then for each bootstrap sample, you calculate the same estimate.
+
+</div>
+
+### Estimate bias
+
 + Compare the bootstrap average to the original estimate
-  + $\frac{1}{B}\sum_{b=1}^{B}\hat\theta^{(b)}-\hat\theta$
+  + $\bar\theta-\hat\theta$
+  + where $\bar\theta=\frac{1}{B}\sum_{b=1}^{B}\hat\theta^{(b)}$
+  
+<div class="notes">
+
+To estimate bias, see how much the average of the bootstrapped estimates differs from the estimate based on the full sample.
+
+For what it's worth, many people (including myself) consider concerns about bias to be overblown. There are times when a biased estimate can be quite serious, especially if the bias is caused by a flaw in the sampling process. But debates about whether you should divide n versus n-1 in the formula for variance are a bit silly. 
+
+Furthermore, a small amount of bias in an estimator may be worth it if you can get less sampling error in return.
+
+There's no correct answer about if and when you should adjust for bias, but I am presenting it here as a simple application of the bootstrap. In all candor, the use of the bootstrap for calculating standard errors, computing confidence intervals, and testing hypotheses are far more common uses of the bootstrap.
+
+</div>
 
 ### Calculate standard errors
 
++ Calculate the standard deviation of the bootstrap estimates
+  + $\sqrt{\frac{1}{B-1}\sum_{b=1}^{B}(\hat\theta^{(b)}-\bar\theta)^2}$
+
+<div class="notes">
+
+You can use the standard deviation of the bootstrapped estimates as an estimate of the standard error of your statistic.
+
+We'll talk next about confidence intervals and hypothesis tests. But the question arises: why would you want a bootstrap estimate of the standard error if not to use it in a confidence interval or a hypothesis test? 
+
+Perhaps there is some value in getting the standard error using a classic approach and comparing it to the bootstrap estimate of the standard error. If the two are close, that gives you some reassurance that the classic approach is appropriate. If they differ, then examine things like whether the sample size is large enough to justify the normal approximation or if other assumptions that you need are justifiable.
+
+</div>
+  
 ### Compute confidence intervals
+
++ Use bootstrap standard error
++ Use percentiles from the bootstrap distribution
++ Use bias corrected and adjusted percentiles
+
+### Compute confidence intervals, bootstrap standard error
+
+### Compute confidence intervals, percentiles
+
+### Compute confidence intervals, BCa
+
++ Bias adjustment (using bootstrap estimates)
+  + $\hat z_0=\Phi^{-1}(\frac{1}{B}H(\hat\theta^{(b)}-\hat\theta))$
+
++ Acceleration (using jackknife)
+  + $\hat a = \frac{\sum_{i=1}^n(\hat\theta_{(.)}-\hat\theta_{(i)})^3}{6(\sum_{i=1}^n (\hat\theta_{(.)}-\hat\theta_{(i)})^2)^{3/2}}$
+
+<div class="notes">
+
+Every reference that I reviewed showed these equations and immediately apologized for their complexity. There appears to be little intuition that you can discern from these formulas. The formula for z-hat-0 is a bit easier to follow, perhaps. It is an adjustment for bias.
+
+The formula for a-hat is a bit trickier. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
+
+Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function. Don't ask me what the score function represents. As best I understand it 
+
+
+Remember that in Calculus, the first derivative is analogous to speed and the second derivative is analogous to acceleration.
+
+If z-hat-sub-0 is equal to zero, there is no adjustment to the confidence interval based on bias.
+
+If a-hat is equal to zero, there is no adjustment to the confidence interval based on skewness.
+
+</div>
+
+### Compute confidence intervals, BCa
+
++ Replace $\alpha/2$ with
+  + $\Phi^{-1}(\hat z_0+\frac{\hat z_0+z_{\alpha/2}}{1-\hat a(\hat z_0+z_{\alpha/2})})$
++ Replace $1-\alpha/2$ with
+  + $\Phi^{-1}(\hat z_0+\frac{\hat z_0+z_{1-\alpha/2}}{1-\hat a(\hat z_0+z_{1-\alpha/2})})$
+
+<div class="notes">
+
+The percentiles that you select from the bootstrap distribution are no longer at alpha/2 and 1-alpha/2, but are moved to account for bias and skewness in the bootstrap distribution.
+
+</div>
+
+### Percentiles with no adjustment
+
+```{r}
+x <- seq(-3, 3, length=101)
+y1 <- pnorm(x)
+alpha <- 0.10
+a1 <-   alpha/2
+a2 <- 1-alpha/2
+z1 <- qnorm(  alpha/2)
+z2 <- qnorm(1-alpha/2)
+data.frame(x, y1) %>%
+  ggplot(aes(x, y1)) +
+    geom_line() +
+    geom_segment(x=z1, y= 0, xend=z1, yend=a1) +
+    geom_segment(x=z1, y=a1, xend=-3, yend=a1) +
+    geom_segment(x=z2, y= 0, xend=z2, yend=a2) +
+    geom_segment(x=z2, y=a2, xend=-3, yend=a2) -> g0
+  g0 +
+    scale_x_continuous(
+      name=" ",
+      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
+      minor_breaks=NULL) +
+    scale_y_continuous(
+      name=" ",
+      breaks=c(round(c(a1, a2), 3), (0:5)/5),
+      minor_breaks=NULL)
+```
+
+### Percentlies with bias adjustment
+
+```{r}
+z0 <- -0.1
+z1 <- qnorm(  alpha/2)+2*z0
+z2 <- qnorm(1-alpha/2)+2*z0
+a1 <- pnorm(z1)
+a2 <- pnorm(z2)
+g0 + 
+    geom_segment(x=z1, y= 0, xend=z1, yend=a1, color="red") +
+    geom_segment(x=z1, y=a1, xend=-3, yend=a1, color="red") +
+    geom_segment(x=z2, y= 0, xend=z2, yend=a2, color="red") +
+    geom_segment(x=z2, y=a2, xend=-3, yend=a2, color="red") +
+    scale_x_continuous(
+      name=" ",
+      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
+      minor_breaks=NULL) +
+    scale_y_continuous(
+      name=" ",
+      breaks=c(round(c(a1, a2), 3), (0:5)/5),
+      minor_breaks=NULL)
+```
+
+### Percentiles with acceleration adjustment
+
+```{r}
+a_hat <- -0.08
+z1 <- qnorm(  alpha/2)/(1-a_hat*qnorm(  alpha/2))
+z2 <- qnorm(1-alpha/2)/(1-a_hat*qnorm(1-alpha/2))
+a1 <- pnorm(z1)
+a2 <- pnorm(z2)
+g0 + 
+    geom_segment(x=z1, y= 0, xend=z1, yend=a1, color="red") +
+    geom_segment(x=z1, y=a1, xend=-3, yend=a1, color="red") +
+    geom_segment(x=z2, y= 0, xend=z2, yend=a2, color="red") +
+    geom_segment(x=z2, y=a2, xend=-3, yend=a2, color="red") +
+    scale_x_continuous(
+      name=" ",
+      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
+      minor_breaks=NULL) +
+    scale_y_continuous(
+      name=" ",
+      breaks=c(round(c(a1, a2), 3), (0:5)/5),
+      minor_breaks=NULL)
+```
+
+
 
 ### Test hypotheses
 
