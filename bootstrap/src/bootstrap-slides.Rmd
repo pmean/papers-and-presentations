@@ -360,14 +360,20 @@ Note: Each bootstrap sample might produce a different set of independent variabl
 + What have you learned
   + History of the bootstrap
 + What's coming next
-  + Reasons for using the bootstrap
+  + Calculations
   
-### Reasons for using the bootstrap
+### Computations
 
 + Estimate bias
 + Calculate standard errors
 + Compute confidence intervals
 + Test hypotheses
+
+<div class="notes">
+
+I want to show the computations used in bootstrapping. These fall into four categories: estimating bias, calculating standard errors, computing confidence intervals, and testing hypotheses.
+
+</div>
 
 ### Evaluate estimates on bootstrapped samples
 
@@ -443,7 +449,7 @@ Every reference that I reviewed showed these equations and immediately apologize
 
 The formula for a-hat is a bit trickier. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
 
-Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function. Don't ask me what the score function represents. As best I understand it 
+Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function. Don't ask me what the score function represents. Also don't ask me why the acceleration relies on a jackknife sample rather than a bootstrap sample. 
 
 
 Remember that in Calculus, the first derivative is analogous to speed and the second derivative is analogous to acceleration.
@@ -492,10 +498,19 @@ data.frame(x, y1) %>%
     scale_y_continuous(
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL)
+      minor_breaks=NULL) -> bca01
+ggsave("../images/bca01.png", bca01, width=6, height=6, units = "in")
 ```
 
-### Percentlies with bias adjustment
+![Figure 1. Graph of unadjusted percentiles](../images/bca01.png)
+
+<div class="notes">
+
+Here's a picture showing what the unadjusted percentiles look like for a 90% confidence interval. Z-0-hat is zero, so no bias adjustment and a-hat is also zero, so no adjustment for skewness. You would just choose the 5th and 95th percentiles of the bootstrapped estimates.
+
+</div>
+
+### Percentiles with bias adjustment
 
 ```{r}
 z0 <- -0.1
@@ -515,8 +530,17 @@ g0 +
     scale_y_continuous(
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL)
+      minor_breaks=NULL) -> bca02
+ggsave("../images/bca02.png", bca02, width=6, height=6, units = "in")
 ```
+
+![Figure 1. Percentiles with bias adjustment](../images/bca02.png)
+
+<div class="notes">
+
+A bias adjustments shifts the z values to the left or the right. In this hypothetical case, the z values are shifted left by 0.2 units, and instead of using the instead of the 5th and the 95th percentiles, you would use would be the 3.3 percentile and the 92.6 percentile.
+
+</div>
 
 ### Percentiles with acceleration adjustment
 
@@ -538,37 +562,58 @@ g0 +
     scale_y_continuous(
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL)
+      minor_breaks=NULL) -> bca03
+ggsave("../images/bca03.png", bca03, width=6, height=6, units = "in")
 ```
 
+![Figure 1. Histogram of bootstrapped estimates](../images/histogram01.png)
 
+<div class="notes">
+
+An adjustment for skewness also shifts the z values to the left or the right, though the shift is stronger on one side versus the other. In this hypothetical case, you would use would be the 2.9 percentile and the 92.7 percentile.
+
+These formulas are messy, and easy to get wrong, so I would recommend if you are programming from scratch that you stick one of the simpler approaches.
+
+</div>
 
 ### Test hypotheses
+
++ Test
+  + $H_0:\ \theta=0$
+  + $H_1:\ \theta>0$
++ Reject $H_0$ if more than 1-$\alpha$ of the $\hat\theta^{(b)}$'s are greater than 0.
 
 ### Break #2
 
 + What you have learned
   + Purposes of the bootstrap
 + What's coming next
-  + Mechanics
+  + Software
   
-### Mechanics
+### Software
 
-+ Resampling
-+ Bootstrap estimates
-+ Bias calculation
-+ Standard error calculation
-+ Confidence interval
-  + Percentile method
-  + Bias corrected and adjusted method
-+ Hypothesis tests
++ You should know
+  + How to loop
+  + How to extract specific values from the output
++ Examples
+  + SAS
+  + Stata
+  + R
+
+<div class="notes">
+
+If you want to program a bootstrap, you need to have enough familiarity with your statistical software to run a loop and extract specific values from the output.
+
+I want to show briefly, how to do a simple bootstrap in SAS, Stata, and R. It may be possible to do this in SPSS, but I am not familiar enough with SPSS to outline how the approach might work.
+
+</div>
 
 ### Break #3
 
 + What have you learned
-  + Mechanics
-+ What's coming next
   + Software
++ What's coming next 
+  + Examples
   
 ### Software
 
