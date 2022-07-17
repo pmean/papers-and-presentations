@@ -17,10 +17,7 @@ suppressMessages(
 ### Outline
 
 + History
-  + The jackknife
-  + Bradley Efron's work
-  + Bagging
-+ Calculations
++ Algorithms
 + Software
 + Examples
 
@@ -64,7 +61,7 @@ The bootstrap represents an early attempt to use the power of computer simulatio
 
 <div class="notes">
 
-I need to start with a book that I used when I was in graduate school. The title is "Approximation Theorems in Mathematical Statistics" by Rboery Serfling. It was all about the variety of ways to show that some statistic followed an asymptotic normal distribution.
+I need to start with a book that I used when I was in graduate school. The title is "Approximation Theorems in Mathematical Statistics" by Robert Serfling. It was all about the variety of ways to show that some statistic followed an asymptotic normal distribution.
 
 </div>
 
@@ -360,9 +357,9 @@ Note: Each bootstrap sample might produce a different set of independent variabl
 + What have you learned
   + History of the bootstrap
 + What's coming next
-  + Calculations
+  + Algorithms
   
-### Computations
+### Algorithms
 
 + Estimate bias
 + Calculate standard errors
@@ -371,7 +368,7 @@ Note: Each bootstrap sample might produce a different set of independent variabl
 
 <div class="notes">
 
-I want to show the computations used in bootstrapping. These fall into four categories: estimating bias, calculating standard errors, computing confidence intervals, and testing hypotheses.
+I want to show the algorithms used in bootstrapping. These fall into four categories: estimating bias, calculating standard errors, computing confidence intervals, and testing hypotheses.
 
 </div>
 
@@ -413,7 +410,7 @@ There's no correct answer about if and when you should adjust for bias, but I am
 ### Calculate standard errors
 
 + Calculate the standard deviation of the bootstrap estimates
-  + $\sqrt{\frac{1}{B-1}\sum_{b=1}^{B}(\hat\theta^{(b)}-\bar\theta)^2}$
+  + $\sigma^{(B)}=\sqrt{\frac{1}{B-1}\sum_{b=1}^{B}(\hat\theta^{(b)}-\bar\theta)^2}$
 
 <div class="notes">
 
@@ -433,7 +430,32 @@ Perhaps there is some value in getting the standard error using a classic approa
 
 ### Compute confidence intervals, bootstrap standard error
 
++ Easy, once you have a standard error
+  + $\hat\theta^{(b)} \pm z_{1-\alpha/2}\sigma^{(B)}$
++ Should you use a t-distribution?
+  + Uncertain degrees of freedom
+
+<div class="notes">
+
+Once you have a standard error, the simplest confidence interval is going use the bootstrap estimate plus or minus a percentile from the standard normal distribution times the bootstrap standard deviation.
+
+There is some controversy about whether you should use a t distribution here. I personally do not recommend it, because it is unclear what the degrees of freedom should be.
+
+</div>
+
 ### Compute confidence intervals, percentiles
+
++ Take percentiles directly from the bootstrap sample
+  + Example, B=1000
+     + Select the 25th and 975 observations in sorted order
+     
+<div class="notes">
+
+An even simpler approach is to take percentiles directly from the bootstrap sample. For this, you need a pretty large number of bootstrap samples. Although some sources say that a few hundred might be okay, I would recommend at least a thousand.
+
+With a thousand bootstrap samples, you would select the 25th and 975th observations, after sorting the data.
+
+</div>
 
 ### Compute confidence intervals, BCa
 
@@ -450,7 +472,6 @@ Every reference that I reviewed showed these equations and immediately apologize
 The formula for a-hat is a bit trickier. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
 
 Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function. Don't ask me what the score function represents. Also don't ask me why the acceleration relies on a jackknife sample rather than a bootstrap sample. 
-
 
 Remember that in Calculus, the first derivative is analogous to speed and the second derivative is analogous to acceleration.
 
@@ -582,6 +603,15 @@ These formulas are messy, and easy to get wrong, so I would recommend if you are
   + $H_0:\ \theta=0$
   + $H_1:\ \theta>0$
 + Reject $H_0$ if more than 1-$\alpha$ of the $\hat\theta^{(b)}$'s are greater than 0.
+  + Could also test using a bootstrap confidence interval
+
+<div class="notes">
+
+To test a hypothesis, count the proportion of bootstrap values that agree with the null hypothesis. If it is less than alpha, then you reject the null hypothesis. Extension to two sided hypotheses is not difficult.
+
+You could also look at any one of the bootstrap confidence intervals and see whether that interval includes or excludes the null value.
+
+</div>
 
 ### Break #2
 
@@ -608,23 +638,458 @@ I want to show briefly, how to do a simple bootstrap in SAS, Stata, and R. It ma
 
 </div>
 
+### Bootstrap in SAS (1/10)
+
++ Example taken from UCLA Statistical Methods and Data Analytics site
+  + Google ucla bootstrap sas
+
+```{}
+ods output FitStatistics = t0;
+proc reg data = hsb2;
+  model read = female math write ses;
+run;
+quit;
+```
+
+<div class="notes">
+
+This example is taken from the [UCLA Statistical Methods and Data Analytics site][ucla-sas]. It pops up easily on a simple google search.
+
+The first statement tells SAS that it should take the output from the following procedure, pull out a particular number from the output called "FitStatistics" and store it in a dataset with the name t0.
+
+I'm guess that the "quit" statement is important here because of the way you are handling output with the ods statement.
+
+[ucla-sas]: https://stats.oarc.ucla.edu/sas/faq/how-can-i-bootstrap-estimates-in-sas/
+
+</div>
+
+### Bootstrap in SAS (2/10)
+
+```{}
+*store the estimated r-square;
+data _null_;
+ set t0;
+ if label2 =  "R-Square" then 
+ call symput('r2bar', cvalue2);
+run;
+```
+
+<div class="notes">
+
+The data step here creates a dataset with the sole purpose of moving the r-squared value to a macro variable. The key function here is symput and if you are not familiar with it, check out the SAS documentation.
+
+</div>
+
+### Bootstrap in SAS (3/10)
+
+```{}
+%let rep = 500;
+proc surveyselect data= hsb2 out=bootsample
+     seed = 1347 method = urs
+	 samprate = 1 outhits rep = &rep;
+run;
+ods listing close;
+```
+
+<div class="notes">
+
+Although you could use a loop here, the surveyselect procedure allows you to create 500 bootstrap samples and store them all in a single dataset.
+
+</div>
+
+### Bootstrap in SAS (4/10)
+
+```{}
+Sample Size                       200
+Expected Number of Hits             1
+Sampling Weight                     1
+Number of Replicates              500
+Total Sample Size              100000
+Output Data Set            BOOTSAMPLE
+```
+
+<div class="notes">
+
+Here is part of the output from surveyselect. The original dataset has 200 observations. We are creating 500 replicates using sampling with replacement. That creates a dataset of 100,000 observations.
+
+</div>
+
+### Bootstrap in SAS (5/10)
+
+```{}
+ods output  FitStatistics = t (where = (label2 =  "R-Square"));
+proc reg data = bootsample;
+  by replicate;
+  model read = female math write ses;
+run;
+quit;
+```
+
+<div class="notes">
+
+The ods statement on the first line of code on this slide tells SAS to look at the output from the following procedure and store the result in a dataset called t.
+
+The "by replicate" statement tells SAS to run a separate regression for each bootstrap sample.
+
+</div>
+
+### Bootstrap in SAS (6/10)
+
+```{}
+* converting character type to numeric type;
+data t1;
+  set t;
+  r2 = cvalue2 + 0;
+run;
+```
+
+<div class="notes">
+
+The output stored in the dataset, however, is a string, and you have to convert it to a numeric value by adding zero. This is a classic SAS hack.
+
+</div>
+
+### Bootstrap in SAS (7/10)
+
+```{}
+%let alphalev = .05;
+%let a1 = %sysevalf(&alphalev/2*100);
+%let a2 = %sysevalf((1 - &alphalev/2)*100);
+```
+
+<div class="notes">
+
+The first three lines are just a fancy way of getting from a 0.05 alpha level to selecting the 2.5 percentile and the 97.5 percentile.
+
+</div>
+
+### Bootstrap in SAS (8/10)
+
+```{}
+* creating confidence interval, percentile method;
+proc univariate data = t1 alpha = .05;
+  var r2;
+  output out=pmethod mean = r2hat pctlpts=&a1 &a2 pctlpre = p pctlname = _lb _ub ;
+run;
+```
+
+<div class="notes">
+
+proc univariate produces the mean as well as the 2.5 and 97.5 percentiles. The pctlpre and pctlname make the variable names of the output dataset look nice.
+
+Although the folks at UCLA take great pains to make everything look nice, they should have used a noprint option for proc univariate to keep the output cleaner.
+
+</div>
+
+### Bootstrap in SAS (9/10)
+
+```{}
+data t2;
+  set pmethod;
+  bias = r2hat - &r2bar;
+  r2 = &r2bar;
+run;
+ods listing;
+```
+
+
+<div class="notes">
+
+That &r2bar is a macro variable of the estimate of R-squared from the original dataset. You subtract it from the mean of the bootstrap samples (r2hat) to get the estimated bias.
+
+</div>
+
+### Bootstrap in SAS (10/10)
+
+```{}
+proc print data  = t2;
+  var r2 bias p_lb p_ub;
+run;
+
+Obs      r2        bias       p_lb     p_ub
+ 1     0.5189    .0066164    0.436    0.6017
+```
+
+<div class="notes">
+
+After all this careful work, you now have the original estimate of R-squared (52% after rounding), the estimated bias (less than 1%) and the confidence interval (44% to 60%).
+
+As a quick recap, knowledge of the output delivery system (ods) and macro variables were critical. Thankfully, you did not need a loop here, but familiarity with looping mechanisms in SAS is probably worth knowing for other bootstrap examples.
+
+If you want to learn more, Rick Wicklin of SAS Institute has a nice series of blog posts. Start with [this one][wick1].
+
+[wick1]: https://blogs.sas.com/content/iml/2016/08/10/bootstrap-confidence-interval-sas.html
+
+</div>
+
+### Bootstrap in Stata (1/4)
+
++ A bit easier
+  + Built-in bootstrap command
+  + Simpler handling of output
++ Example taken from UCLA Statistical Methods and Data Analytics site
+  + Google ucla bootstrap stata
+
+<div class="notes">
+
+I am not an expert on Stata, but it was created in 1985 about two decades later than SAS. So it did not have any holdovers from the restricted options available in the age of IBM mainframe computers.
+
+This example is taken from the [UCLA Statistical Methods and Data Analytics site][ucla-stata]. It pops up easily on a simple google search.
+
+
+[ucla-stata]: https://stats.oarc.ucla.edu/sas/faq/how-can-i-bootstrap-estimates-in-sas/
+
+</div>
+
+### Bootstrap in Stata (2/4)
+
+```{}
+use http://statistics.ats.ucla.edu/stat/stata/notes/hsb2, clear
+regress read female math write ses
+```
+
+<div class="notes">
+
+Here is the Stata code to get the estimates from the original data.
+
+</div>
+
+### Bootstrap in Stata (3/4)
+
+```{}
+bootstrap rmse=e(rmse), reps(100) seed(12345): regress read female math write ses
+```
+
+<div class="notes">
+
+Stata has a bootstrap function built-in. It is both a good thing and a bad thing. It is good in that it simplifies your code. It is bad in that it can only bootstrap on prespecified parts of the output. In fairness, this is also a limitation with the output delivery system in SAS. Both systems are pretty good at letting you pick out the pieces of the output that you are most interested in.
+
+</div>
+
+### Bootstrap in Stata (4/4)
+
+```{}
+------------------------------------------------------------------------------
+             |   Observed   Bootstrap                         Normal-based
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        rmse |   7.184202   .2594069    27.69   0.000     6.675774     7.69263
+------------------------------------------------------------------------------
+```
+
+<div class="notes">
+
+Here is the output. By default, it provides a confidence interval based on the bootstrap standard error, but you can get other confidence intervals as well.
+
+In this example, the original data produced a root mean squared error of 7.2 and the bootstrap 95% confidence interval goes from 6.7 to 7.7.
+
+</div>
+
+### Bootstrap in R (1/4)
+
++ Easiest and most flexible choice
+  + Special library
+  + Simple looping stuctures 
+  + Easy to extract specific values
++ Example taken from UCLA Statistical Methods and Data Analytics site
+  + Google ucla bootstrap r
+  
+<div class="notes">
+
+R was created in 1999, and relied on a modular approach that makes it ideal for bootstrapping. There is a special library that works for most cases, even some very exotic ones. Looping in R is easy as is extracting specific values.
+
+Again, I am using an example from the [UCLA Statistical Methods and Data Analytics site][ucla-r]. It pops up easily on a simple google search.
+
+[ucla-r]: https://stats.oarc.ucla.edu/r/faq/how-can-i-generate-bootstrap-statistics-in-r/
+
+</div>
+
+### Bootstrap in R (2/4)
+
+```{}
+library(boot)
+hsb2 <- read.table("https://stats.idre.ucla.edu/stat/data/hsb2.csv", sep=",", header=T)
+fc <- function(d, i){
+	d2 <- d[i,]
+	return(cor(d2$write, d2$math))
+}
+```
+
+<div class="notes">
+
+
+
+</div>
+
+### Bootstrap in R (3/4)
+
+```{}
+fc <- function(d, i){
+	d2 <- d[i,]
+	return(cor(d2$write, d2$math))
+}
+
+set.seed(626)
+bootcorr <- boot(hsb2, fc, R=500)
+```
+
+<div class="notes">
+
+
+
+</div>
+
+### Bootstrap in R (4/4)
+
+```{}
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+Call:
+boot(data = hsb2, statistic = fc, R = 500)
+
+
+Bootstrap Statistics :
+     original       bias    std. error
+t1* 0.6174493 -0.001528707  0.04020362
+```
+
+<div class="notes">
+
+
+
+</div>
+
 ### Break #3
 
 + What have you learned
   + Software
 + What's coming next 
-  + Examples
+  + Special issues
   
-### Software
-
 ### Special issues
 
++ Visualization
++ How many bootstraps?
++ Multiple groups
 + Time series
 + Regression models
+
+<div class="notes">
+
+In more complex settings, you need to consider some modifications to the bootstrap. I have almost no experience in these settings and there is scant guidance in the published literature and on the web.
+
+If you find yourself in one of these settings, I would encourage you to find a few publications that use the bootstrap in a setting reasonably similar to yours and emulate their approach.
+
+I call this the "lemming school of research" which is a reference to the warning about peer pressure that almost every parent has nagged their children with ("If all your friends jumped off a cliff, would you jump off the cliff as well?").
+
+It actually is not as bad as I make it sound. If a certain methodology has survived the peer reviewe process, that gives you a bit more confidence that you can survive the peer review process as well if you emulate their approach. There are no guarantees, of course, but this is perhaps an illustration of a more positive message: "there is safety in numbers."
+
+The three settings I want to discuss are multiple groups, time series, and regression models.
+
+</div>
+
+### Visualization (1/2)
+
+![Figure 1. Age changes in risk for heart transplant patients](../images/transplant-curves.png)
+
+### Visualization (2/2)
+
+![Figure 1. Map](../images/bootstrap-map.png)
+
+### How many bootstraps?
+
++ For visualization: 10 to 50
++ For estimating a standard error: 50 to 100
++ For confidence intervals and hypothesis tests: 500 to 1000
+
+### Multiple groups
+
++ Do you allow the group sizes to vary?
++ Stratified bootstrap
+  + Two group example
+
+<div class="notes">
+
+Suppose you have two or more groups and want to estimate a statistic across all of the groups. For example, you have a treatment and a control group and you want to estimate the difference in medians between the two groups.
+
+You have two options. The first is to apply a simple bootstrap. This allows the relative sizes in the groups to vary. If one of the groups has a small relative sample size, then you run a slight risk having zero observations in that group for one or more of your bootstrap samples.
+
+If the group sizes are all reasonably large, this is not a serious problem.
+
+An alternative is to use a stratified bootstrap sample. It's easy enough to envision with two groups. Let's say that the two groups have sample sizes n1 and n2. Sample n1 observation with replacement from the first group, sample with n2 observations with replacement from the second group and then combine.
+
+The stratified bootstrap answers a different question than the simple bootstrap. The simple bootstrap calculates uncertainty in a setting where you are collecting a single sample and that sample has a random number of subjects in each group. The stratified bootstrap calculates uncertainty where you are collecting samples from multiple groups, each with a fixed quota.
+
+Is this a huge difference? I'm not sure, but my guess is that it is not all that important except when one or more of the group sizes is small. By small, I mean 10 or less. I should note, however, that I have not seen an "official" guidance on this question.
+
+</div>
+
+### Time series
+
++ Simple bootstrap destroys important features of time series models
+  + Evenly spaced observations
+  + Serial correlation
+  + Seasonality
+  + Temporal trends
++ Solutions
+  + Bootstrap blocks of consecutive observations
+  + Detrend/decompose the time series
+
+<div class="notes">
+
+There are special features of time series data that make them difficult to use with a simple bootstrap. The first and most obvious feature is that most time series have a nice neatly ordered pattern or even spacing over time. A bootstrap sample is going to have gaps in some places and multiple observations at the same time point.
+
+Most time series also exhibit serial correlation, seasonality, and/or temporal trends. These features are either seriously distorted or totally destroyed in a bootstrap sample.
+
+There are several possible solutions. One is to bootstrap consecutive blocks of observations. This preserves time series features within a block and appears to perform reasonably well.
+
+A second option is to remove any trend and decompose the time series into independent components, take a bootstrap sample of the independent components, and then recompose a new series from the bootstrap sample.
+
+The approach you take largely depends on the context of your problem and what statistic you are trying to characterize. For example, if you detrend the data and remove seasonality, then any bootstrapped estimate from the reconstructed time series will be fine if it is modeling a feature of the data other than the trend or seasonality.
+
+</div>
+
+### Regression models
+
++ Subsample may have perfect collinearity
++ Are the independent variables fixed or random?
++ Solution: bootstrap residuals
+
+<div class="notes">
+
+The regression model has some of the same issues as the setting with multiple groups described earlier. If some of the independent variables are very strongly correlated, you might end up with a setting where the correlation is exactly 1 for one or more of the bootstrap samples. This is not a serious issue unless you have both a strong correlation and a small sample size.
+
+But another consideration is that the bootstrap sample treats the independent variables as if they are selected randomly along with the dependent variable. This may be the case, but there are some datasets where the X values are fixed in advance and the dependent variable is the only thing being sampled.
+
+One possible solution is to compute the residuals and reconstruct a new dependent variable from the bootstrapped residuals.
+
+Context is important here. If you bootstrap the residuals, you can't use the reconstructed dependent variable as an estimate of the regression slopes themselves. You could use them to reconstruct a statistic that is independent of those slopes.
+
+</div>
+
+### Final bits of advice
+
++ Situations where the bootstrap performs poorly
+  + Small sample size
+  + Data from "weird" distributions
+  + Statistics at or near the extremes
++ Situations where a simple bootstrap performs poorly
+  + Multiple groups with small sample sizes
+  + Time series models
+  + Complex regression models
++ Situations where the bootstrap performs well
+  + Statistics with no known theoretical results
+  + Statistics where approximations are questionable
+
+<div class="notes">
+
+
+
+</div>
 
 ### Summary
 
 + History
-+ Purpose
-+ Calculations
++ Algorithms
 + Software
++ Special issues
