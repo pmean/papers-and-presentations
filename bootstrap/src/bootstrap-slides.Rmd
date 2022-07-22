@@ -2,15 +2,23 @@
 title: "A gentle introduction to the bootstrap"
 author: "Steve Simon"
 date: "Created 2022-07-13"
-output: powerpoint_presentation
+output:
+  powerpoint_presentation:
+    reference_doc: wide-screen-template.pptx
 ---
 ```{r setup, echo=FALSE}
-knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(
+  echo=FALSE,
+  message=FALSE,
+  warning=FALSE)
 suppressMessages(
   suppressWarnings(
     library(tidyverse)
   )
 )
+# Width and height of all graphs
+w=6
+h=3
 ```
 
 ### Outline
@@ -30,12 +38,11 @@ This talk will cover four major areas.
 
 First, I will provide a historical overview, starting with a simpler method that the bootstrap was based on called the jackknife. Then I will talk about Bradley Efron's work to develop the bootstrap and establish its theoretical foundations. Then I will mention how bootstrapping has developed into a methodology used in machine learning called bagging.
 
-Next, I will explain the reasons why you might want to use the bootstrap: to estimate bias, calculate standard errors, compute confidence intervals, test hypotheses, and to visualize variations in statistical plots.
+I will illustrate the mechanics of the bootstrap: to estimate bias, calculate standard errors, compute confidence intervals, test hypotheses, and to visualize variations in statistical plots.
 
-I will illustrate the mechanics of the bootstrap and show briefly how to implement the bootstrap in SAS, Stata, and R.
+Then I will show some sample code on how to implement the bootstrap in SAS, Stata, and R.
 
 Then I will discuss some special cases where you might consider more complex forms of bootstrapping.
-
 
 </div>
 
@@ -50,7 +57,7 @@ Then I will discuss some special cases where you might consider more complex for
 
 I want to provide a bit of historical context. Before the bootstrap came along, researchers relied on a variety of mathematical theorems like the Central Limit Theorem and extensions to the Central Limit Theorem to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses.
 
-The bootstrap represents an early attempt to use the power of computer simulation to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses. The bootstrap provides these answers in many settings where you can't find a variation on the Central Limit Theorem that would apply or when you don't trust the approximation. I'll provide a brief overview of the jackknife, an earlier approach that the bootstrap was based on. Then I'll talk about Bradley Efron's work in the 1970's and 1980's to develop the bootstrap and to establish the mathematical principles that make the bootstrap work in so many different areas. Finally, I will talk about how bootstrapping came to be relied on in various machine learning algorithms.
+The bootstrap represents an early attempt to use the power of computer simulation to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses. The bootstrap provides these answers in many settings where you can't find a version of the Central Limit Theorem that would apply or when you don't trust the approximation. I'll provide a brief overview of the jackknife, an earlier approach that the bootstrap was based on. Then I'll talk about Bradley Efron's work in the 1970's and 1980's to develop the bootstrap and to establish the mathematical principles that make the bootstrap work in so many different areas. Finally, I will talk about how bootstrapping came to be relied on in various machine learning algorithms.
 
 </div>
 
@@ -72,11 +79,11 @@ I need to start with a book that I used when I was in graduate school. The title
   + The $X_i$ have a finite second moment
 
 + A more precise statement
-  + $lim\limits(n \to \infty)\  \frac{\bar{X}-\mu}{\sigma / \sqrt{n}} = N(0,1)$
+  + $lim_{n \to \infty}\  \frac{\bar{X}-\mu}{\sigma \sqrt{n}} = N(0,1)$
 
 <div class="notes">
 
-I'm sure you're all familiar with the Central Limit Theorem. It's the graddaddy of all approximation theorems. It states that the average of independent identically distributed random variables is approximately normal.
+I'm sure you're all familiar with the Central Limit Theorem. It's the granddaddy of all approximation theorems. It states that the average of independent identically distributed random variables is approximately normal.
 
 The rule of thumb is that you can trust the normal approximation when the sample size is greater than 30. There is a lot that you can quibble about with respect to the cut-off of 30, but we're not going to get too fussy about this.
 
@@ -98,7 +105,7 @@ $std.err(\bar{X})=\frac{\sigma}{\sqrt n}$
 
 <div class="notes">
 
-You can also show easily that the expected value of the sample mean is mu (the sample mean is an unbiased estimate of the population mean) and that the variance of the sample mean is the variance of an individual X value divided by the sample size n. Equivalently, the standard error of X=bar is the standard deviation of an individual value divided by the square root of the sample size.
+You can also show easily that the expected value of the sample mean is mu (the sample mean is an unbiased estimate of the population mean) and that the variance of the sample mean is the variance of an individual X value divided by the sample size n. Equivalently, the standard error of X-bar is the standard deviation of an individual value divided by the square root of the sample size.
 
 </div>
 
@@ -124,13 +131,15 @@ What if you are measuring the mean absolute deviation (the average of the absolu
 
 If you are really clever and if you understand all the approximation theorems in Robert Serfling's book, you will know how to establish an approximation to these statistics (usually a normal approximation, but sometimes there are other distributions like the chi-square distribution that represent a good approximation).
 
+But there are lots of settings where even Dr. Serfling's hard work will still leave you high and dry. Some statistics are just so messy that no one can figure out an asymptotic approximation.
+
 But an even more fundamental question is what do you do when the sample size is not large enough to justify the use of the Central Limit Theorem? I put down n<30 here, but in some settings (well behaved distributions without much skewness and only a weak tendency to produce outliers), you might get by with only 10 observations. Other times (extremely skewed distributions and/or a strong tendency to produce outliers), even a sample size of 300 is inadequate to assume an approximately normal distribution.
 
 It turns out that you can use simulations involving the data itself to establish an underlying distribution.
 
-You might find that the normal distribution is a reasonable approximation. If so, great! Consider the bootstrap to be a sensitivity check that you passed with flying colors. 
+You might find, after applying the bootstrap, that the normal distribution is a reasonable approximation. If so, great! Consider the bootstrap to be a sensitivity check that you passed with flying colors. 
 
-If the results of the bootstrap are markedly different from the results assuming approximate normality, then investigate further. But you can rely on the bootstrap results to provide valid confidence intervals and hypothesis tests. Although there are a few settings where you shouldn't rely on a bootstrap approach, it is a credible approach for a surpringly broad range of settings.
+If the results of the bootstrap are markedly different from the results assuming approximate normality, then investigate further. But you can almost always rely on the bootstrap results to provide valid confidence intervals and hypothesis tests. Although there are a few settings where you shouldn't rely on a bootstrap approach, it is a credible approach for a surprisingly broad range of settings.
 
 </div>
 
@@ -312,7 +321,7 @@ The standard deviation from the bootstrap mean absolute deviations is an estimat
 ```{r}
 g1 <- ggplot(data.frame(m=m), aes(x=m)) + 
   geom_histogram(binwidth=0.1)
-ggsave("../images/histogram01.png", g1, width=6, height=6, units = "in")
+ggsave("../images/histogram01.png", g1, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Histogram of bootstrapped estimates](../images/histogram01.png)
@@ -334,7 +343,7 @@ finv <- function(u) {
   lambda*(-log(1-u))^(1/k)
 }
 
-y0 <- seq(0.001, 0.999, length=999)
+y0 <- seq(0.001, 0.9999, length=9999)
 x0 <- finv(y0)
 ```
 
@@ -349,7 +358,7 @@ u1 <- runif(10)
 y1 <- sort(runif(10))
 
 # a cheat to make the uniforms behave better
-y1 <- (rep(1:10, 2) + 2*y1)/12
+# y1 <- (rep(1:10) + 2*y1)/12
 
 x1 <- finv(y1)
 ```
@@ -359,7 +368,7 @@ x1 <- finv(y1)
 y2 <- sort(runif(10))
 
 # a cheat to make the uniforms behave better
-y2 <- (rep(1:10, 2) + 2*y2)/12
+y2 <- ((1:10) + 2*y2)/12
 
 x2 <- finv(y2)
 ```
@@ -376,24 +385,24 @@ for (i in 1:10) {
 ```{r}
 ### Generate bootstrap sample
 y4 <- y1
-x4 <- x1[ceiling(10*x1)]
+x4 <- x2[ceiling(10*y4)]
 
 data.frame(x4) %>%
   group_by(x4) %>%
-  mutate(n4=rank(x4)) %>%
+  mutate(n4=row_number(x4)) %>%
   ungroup %>%
   pull(n4) -> n4
+n4 <- (n4-1)/70
 ```
-
 
 ```{r}
 # Plot CDF
 data.frame(x0, y0) %>%
   ggplot(aes(x0, y0)) +
-    geom_line(col="darkgray", width=5) +
+    geom_line(col="darkgray", size=1.5) +
     scale_x_continuous(breaks=2*(0:4)) +
     expand_limits(x=0) -> intuition0
-ggsave("../images/intuition0.png", intuition0)
+ggsave("../images/intuition0.png", intuition0, width=w, height=h, unit="in")
 ```
 
 ![Figure 1. An example of a cumulative density function](../images/intuition0.png)
@@ -436,7 +445,7 @@ for (i in 1:10) {
       y=0, 
       shape=1) -> intuition1
 }
-ggsave("../images/intuition1.png", intuition1)
+ggsave("../images/intuition1.png", intuition1, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Using random uniform values to simulate data from a cumulative distribution function](../images/intuition1.png)
@@ -456,10 +465,10 @@ Of course, most of the time, you can't run this Monte Carlo simulation without m
 ```{r}
 data.frame(x3, y3) %>%
   ggplot(aes(x3, y3))  +
-    geom_line(col="darkgray", width=5) +
+    geom_line(col="darkgray", size=1.5) +
     scale_x_continuous(breaks=2*(0:4)) +
     expand_limits(x=0) -> intuition3
-ggsave("../images/intuition3.png", intuition3)
+ggsave("../images/intuition3.png", intuition3, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Estimate of cumulative density function from the data](../images/intuition3.png)
@@ -477,25 +486,27 @@ The empirical cumulative distribution function does a pretty good job. It is unb
 ### A bit of intuition about the bootstrap (4/4)
 
 ```{r}
-intuition4 <- intuition3
-for (i in 1:10) {
-  intuition3 +
+boot_data <- data.frame(x4=x4, y4=y4, n4=n4)
+intuition3 +
     geom_segment(
-      x=0, 
-      y=y4[i], 
-      xend=x4[i], 
-      yend=y4[i]) +
-    geom_segment(
-      x=x4[i],
-      y=y4[i],
-      xend=x4[i],
+      data=boot_data,
+      aes(x=x4, y=y4),
+      x=x4,
+      y=y4,
+      xend=x4,
       yend=0)  +
+    geom_segment(
+      data=boot_data,
+      x=0, 
+      y=y4, 
+      xend=x4, 
+      yend=y4) +
     geom_point(
-      x=x4[i], 
-      y=n4[i]/70, 
+      data=boot_data,
+      x=x4, 
+      y=n4, 
       shape=1) -> intuition4
-}
-ggsave("../images/intuition4.png", intuition4)
+ggsave("../images/intuition4.png", intuition4, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Random uniform values converted into a bootstrap](../images/intuition4.png)
@@ -506,7 +517,7 @@ If you can't generate random variables from the true cumulative distribution fun
 
 What you're doing here is sampling from the data with replacement. So, at least intuitively, this is equivalent to an approximate Monte Carlo simulation based on the empirical cumulative distribution function.
 
-Notice in this example that some of the data values 
+Notice in this example that some of the data values appear two or more times and others are not selected at all. Because it is done randomly, you get a reasonable set of simulated values, even without knowing the true underlying cumulative distribution function. 
 
 </div>
 
@@ -516,11 +527,11 @@ Notice in this example that some of the data values
 
 <div class="notes">
 
-The name bootstrap comes from the saying "Pull yourself up by your bootstraps". It is a reference to getting something done without any help. This is analogous to the bootstrap produces results with just the data at hand and no outside help from an assumed distribution.
+The name bootstrap comes from the saying "Lift yourself up by your bootstraps". It is a reference to getting something done without any help. This is analogous to the statistical bootstrap. It produces results with just the data at hand and no outside help from an assumed distribution.
 
 But the image of lifting yourself into the air by yanking on a loop of your shoe is also an analogy to doing something that seems impossible. The Useless Etymology website has a [nice discussion][use1] of this saying, and the image you see here is taken from their website. 
 
-The origin of this phrase is unclear. Several web pages trace this phrase back to a book, The Surprising Adventures of Baron Munchausen. This was a litany of tall tales somewhat akin to the Paul Bunyan character in American folklore. One of the improbable tasks that Baron Munchausen did was lifting himself out of a deep well by pulling on his bootstraps.
+The origin of this phrase "Lift yourself up by your bootstraps" is unclear. Several web pages trace this phrase back to a book, The Surprising Adventures of Baron Munchausen. This was a litany of tall tales somewhat akin to the Paul Bunyan character in American folklore. One of the improbable tasks that Baron Munchausen did was lifting himself out of a deep well by pulling on his bootstraps.
 
 [use1]: https://uselessetymology.com/2019/11/07/the-origins-of-the-phrase-pull-yourself-up-by-your-bootstraps/
 
@@ -536,9 +547,9 @@ The origin of this phrase is unclear. Several web pages trace this phrase back t
 
 <div class="notes">
 
-I want to briefly address an important application of the bootstrap to machine learning. Bagging is a portmanteau, a combination and shortening of two words: bootstrap aggregation.
+I want to briefly address bagging, an important application of the bootstrap to machine learning. Bagging is a portmanteau, a combination and shortening of two words: bootstrap aggregation.
 
-The basic building block for bagging in the random forest model is the CART model, Classification and Regression Trees.
+The basic building block for bagging in the random forest model is the CART model. CART is an acronym for Classification and Regression Trees.
 
 </div>
 
@@ -571,6 +582,10 @@ This is an example from the [Wikipedia page on decision tree learning][wik1]. It
 
 [wik1]: https://en.wikipedia.org/wiki/Decision_tree_learning
 [wik2]: https://commons.wikimedia.org/w/index.php?curid=90405437
+
+This classification tree creates splits that lead to probabilities that are homogenous (close to either 0 or 1). This tree looks at survival of passengers on the Titanic. The Titanic was a massive passenger ship, especially massive for its time. It was so big that it was considered unsinkable. It first sailed across the Atlantic in 1912, hit an iceberg, and sank like a stone. Many of the passengers died, but the deaths were not distributed evenly across all demographic groups.
+
+The classification tree for survival first splits by gender. For females, you can't improve things too much by splitting further. This group has a 0.73 survival probability and it represents 36% of the total data. For males, you can improve the homogeneity of the outcome by looking at age and the number of siblings. For males, being young (under 9.5 years of age) and not being part of a big family (two or fewer siblings) leads to a suvival probability of 0.89. But this is a small subset of the passengers, only 2% of the total.
 
 Both classification trees and regression trees have a tendency to overfit the data. They are also highly sensitive to small changes in the data. In fact, I would have a hard time recommending the use of these models at all.
 
@@ -621,7 +636,7 @@ Note: Each bootstrap sample might produce a different set of independent variabl
 
 <div class="notes">
 
-I want to show the algorithms used in bootstrapping. These fall into four categories: estimating bias, calculating standard errors, computing confidence intervals, and testing hypotheses.
+I want to show the algorithms used in bootstrapping. These fall into five categories: estimating bias, calculating standard errors, computing confidence intervals, testing hypotheses, and visualization. I also want to provide some guidance on how many bootstrap samples you need.
 
 </div>
 
@@ -638,7 +653,7 @@ I want to show the algorithms used in bootstrapping. These fall into four catego
 
 For all of the proposed uses of the bootstrap, you start with an estimate based on the full dataset. Call that estimate theta-hat.
 
-Then for each bootstrap sample, you calculate the same estimate.
+Then for each bootstrap sample, you calculate the same estimate. Call these theta-hat superscript 1, theta-hat superscript 2, all the way through to theta-hat superscript B, where B is the number of bootstrap samples.
 
 </div>
 
@@ -700,6 +715,8 @@ Once you have a standard error, the simplest confidence interval is going use th
 
 There is some controversy about whether you should use a t distribution here. I personally do not recommend it, because it is unclear what the degrees of freedom should be.
 
+Other approaches may be preferred. The classic interval makes a pretty strong assumption. It assumes that the sampling distribution of the estimate is symmetric. Even so, the classical approach is still reasonable.
+
 </div>
 
 ### Compute confidence intervals, percentiles
@@ -728,15 +745,19 @@ With a thousand bootstrap samples, you would select the 25th and 975th observati
 
 <div class="notes">
 
-Every reference that I reviewed showed these equations and immediately apologized for their complexity. There appears to be little intuition that you can discern from these formulas. The formula for z-hat-0 is a bit easier to follow, perhaps. It is an adjustment for bias.
+You can improve on the percentile confidence interval, but the work is tricky.
+
+So tricky that every reference that I reviewed showed these equations and immediately apologized for their complexity. There appears to be little intuition that you can discern from these formulas. The formula for z-hat-0 is a bit easier to follow, perhaps. It is an adjustment for bias.
 
 The H function effectively counts the number of bootstrap estimates that are greater than the estimate based on the original data. Divide by the number of bootstrap samples to get a proportion. Phi inverse converts this proportion into a percentile from a standard normal distribution. If exactly half of the bootstrap estimates are greater than the estimate based on the original data, then you get a big fat zero which means no bias adjustment.
 
-The formula for a-hat is a bit trickier. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
+The formula for a-hat is a bit harder to follow. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
 
-Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function. Don't ask me what the score function represents. Also don't ask me why the acceleration relies on a jackknife sample rather than a bootstrap sample. 
+Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function.
 
 Remember that in Calculus, the first derivative is analogous to speed and the second derivative is analogous to acceleration.
+
+Don't ask me what the score function represents. Also don't ask me why the acceleration relies on a jackknife sample rather than a bootstrap sample. 
 
 If z-hat-sub-0 is equal to zero, there is no adjustment to the confidence interval based on bias.
 
@@ -783,7 +804,7 @@ data.frame(x, y1) %>%
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
       minor_breaks=NULL) -> bca01
-ggsave("../images/bca01.png", bca01, width=6, height=6, units = "in")
+ggsave("../images/bca01.png", bca01, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Graph of unadjusted percentiles](../images/bca01.png)
@@ -815,7 +836,7 @@ g0 +
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
       minor_breaks=NULL) -> bca02
-ggsave("../images/bca02.png", bca02, width=6, height=6, units = "in")
+ggsave("../images/bca02.png", bca02, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Percentiles with bias adjustment](../images/bca02.png)
@@ -847,7 +868,7 @@ g0 +
       name=" ",
       breaks=c(round(c(a1, a2), 3), (0:5)/5),
       minor_breaks=NULL) -> bca03
-ggsave("../images/bca03.png", bca03, width=6, height=6, units = "in")
+ggsave("../images/bca03.png", bca03, width=w, height=h, units = "in")
 ```
 
 ![Figure 1. Histogram of bootstrapped estimates](../images/bca03.png)
@@ -863,8 +884,8 @@ These formulas are messy, and easy to get wrong, so I would recommend if you are
 ### Test hypotheses
 
 + Test
-  + $H_0:\ \theta $geq$ =0$
-  + $H_1:\ \theta>0$
+  + $H_0:\ \theta \leq 0$
+  + $H_1:\ \theta > 0$
 + Reject $H_0$ if fewer than $\alpha$ of the $\hat\theta^{(b)}$'s are less than 0.
   + Could also test using a bootstrap confidence interval
 
@@ -880,9 +901,24 @@ You could also look at any one of the bootstrap confidence intervals and see whe
 
 ![Figure 1. Age changes in risk for heart transplant patients](../images/transplant-curves.png)
 
+<div class="notes">
+
+This image comes from a [1986 publication][efron1986] in Statistical Science by Bradley Efron and Robert Tibshirani.
+
+[efron1986]: http://www.nielsen.sites.oasis.unc.edu/soci709/cdocs/efron.pdf
+
+
+</div>
+
 ### Visualization (2/2)
 
 ![Figure 1. Map](../images/bootstrap-map.png)
+
+<div class="notes">
+
+
+
+</div>
 
 ### How many bootstraps?
 
@@ -1371,5 +1407,19 @@ Keep in mind, though, that the bootstrap can't compensate for a limited sample s
 So we've covered the history of the bootstrap, illustrated some algorithms, showed how to compute a bootstrap in SAS, Stata, and R, and discussed some special issues where you might want to modify the bootstrap approach.
 
 I'd be glad to take any questions you might have.
+
+</div>
+
+### Bibliography
+
+Bradley Efron, Gail Gong. A Leisurely Look at the Bootstrap, Jackknife, and Cross-Validation. The American Statistician, 1983, 37(1), 36-48.
+
+Bradley Efron, Robert Tibshirani. Bootstrap Methods for Standard Errors, Confidence Intervals, and Other Measures of Statistical Accuracy. Statistical Science, 1986, 1(1), 54-75.
+
+<div class="notes">
+
+http://users.cla.umn.edu/~nwaller/prelim/efronbootjackcrossv.pdf
+
+http://www.nielsen.sites.oasis.unc.edu/soci709/cdocs/efron.pdf
 
 </div>
