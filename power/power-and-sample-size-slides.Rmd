@@ -9,7 +9,7 @@ output:
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(
-  echo=FALSE,
+  echo=TRUE,
   message=FALSE,
   warning=FALSE)
 suppressMessages(
@@ -109,6 +109,8 @@ I know it will make me unpopular with this audience, but SAS has a very nice set
 ### Other software
 
 + nQuery advisor
++ G*Power
++ Power and Precision
 
 <div class="notes">
 
@@ -118,4 +120,114 @@ I know it will make me unpopular with this audience, but SAS has a very nice set
 
 ### Software to calculate power and sample size: R
 
-+ 
++ Program from scratch
+  + qnorm
+  + pt
++ stats library
+  + power.t.test
+  + Others (power.anova.test, power.prop.test)
+
+### Independent samples t-test
+
++ $H_0:\ \mu_1 \leq \mu_2$
++ $H_1:\ \mu_1 > \mu_2$
+  + Assume normal with known $\sigma$
++ Test statistic
+  + $T = \frac{\bar{X}_1-\bar{X}_2}{\sigma \sqrt{1/n_1+1/n_2}}$
+  + Reject $H_0$ if T > $z_\alpha$
+
+### Approximate sample size for independent samples t-test (1/3)
+
++ Approximate formula
+  + $\beta$=1-power
+  + $n = \frac{2(z_\alpha+z_\beta)^2 \sigma^2}{(\mu_1-\mu_2)^2}$ 
+  + $n = \frac{2(z_\alpha+z_\beta)^2}{ES^2}$ 
++ Simple modifications for
+  + two-sided test
+  + unequal group sizes
+  + unequal variances
+
+### Approximate sample size for independent samples t-test (2/3)
+
++ $\alpha=0.025$
++ $\beta=0.80$
+  + $n = \frac{2(1.96+0.84)^2}{ES^2}$
+  + $n = \frac{15.84}{ES^2}$
+  + $n \approx \frac{16}{ES^2}$
+  
+### Approximate sample size for independent samples t-test (3/3)
+
+```{r}
+alpha <- 0.025
+beta <- 0.20
+delta <- 20
+sigma <- 40
+ES <- delta/sigma
+2*(qnorm(1-alpha)+qnorm(1-beta))^2/ES^2
+```
+
+### Power for independent samples t-test (1/2)
+
++ Use non-central t distribution
+  + ncp = $ES\ \sqrt{n/2}$
++ Power = P[non-central t > $z_\alpha$]
+
+### Test
+
+```{r}
+n <- 64
+1-pt(
+  qnorm(1-alpha), 
+  df=126, 
+  ncp=ES*sqrt(n/2))
+```
+
+### Power for independent samples t-test (2/2)
+
+```{r}
+1-pt(qnorm(1-alpha), df=62, ncp=sqrt(n/2)*ES)
+```
+
+### Using power.t.test (1/2)
+
+```{r}
+estimated_power <- 
+  power.t.test(
+    n=64, 
+    delta=0.5, 
+    sd=1, 
+    sig.level=0.025, 
+    power=NULL,
+    type="two.sample",
+    alternative="one.sided")
+```
+
+### Using power.t.test (2/2)
+
+```{r}
+names(estimated_power)
+estimated_power$power
+estimated_power$note
+```
+
+### Other libraries  
++ Hmisc
++ pwr
++ pwr2
++ samplesize
++ Many others
+
+### Simulation
+
++ From scratch
++ simglm library
++ Bayesian simulation using MCMC??
+
+### What if you have no hypothesis?
+
++ Descriptive study
+  + Use CI width to estimate sample size
++ Focus groups
+  + Saturation
++ Other qualitative studies
+  + Use qualitative criteria
