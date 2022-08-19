@@ -21,7 +21,34 @@ w=6
 h=3
 ```
 
-### Outline
+### Where this fits
+
+![](../images/where-this-fits.png)
+
+<div class="notes">
+
+
+
+</div>
+
+### Goal
+
+For you to have a good understanding of:
+
++ what the bootstrap is
++ when it is appropriate to use it
++ the steps to implement the bootstrap.
+
+The goal is not to cover every possible application of the bootstrap.
+
+<div class="notes">
+
+
+
+</div>
+
+
+### What you'll learn today
 
 + History
 + Algorithms
@@ -46,6 +73,14 @@ Then I will discuss some special settings where you might consider more complex 
 
 </div>
 
+### 1. History
+
+<div class="notes">
+
+
+
+</div>
+
 ### History of the bootstrap
 
 + Can you rely on asymptotic normality?
@@ -61,7 +96,7 @@ The bootstrap represents an early attempt to use the power of computer simulatio
 
 </div>
 
-### Can we rely on asymptotic normality? (1/4)
+### Can you rely on asymptotic normality? (1/3)
 
 ![Figure 1. Cover of book by Robert Serfling](../images/serfling-book-cover.jpg)
 
@@ -71,25 +106,10 @@ I need to start with a book that I used when I was in graduate school. The title
 
 </div>
 
-### Can we rely on asymptotic normality? (2/4)
+### Can you rely on asymptotic normality? (2/3)
 
-+ $\bar{X}=\frac{1}{n}\sum_{i=1}^{n} X_i$ is approximately normal if
-  + The $X_i$ all come from the same distribution
-  + The $X_i$ are all independent
-  + The $X_i$ have a finite second moment
-
-+ A more precise statement
-  + $lim_{n \to \infty}\  \frac{\bar{X}-\mu}{\sigma \sqrt{n}} = N(0,1)$
-
-<div class="notes">
-
-I'm sure you're all familiar with the Central Limit Theorem. It's the granddaddy of all approximation theorems. It states that the average of independent identically distributed random variables is approximately normal.
-
-The rule of thumb is that you can trust the normal approximation when the sample size is greater than 30. There is a lot that you can quibble about with respect to the cut-off of 30, but we're not going to get too fussy about this.
-
-</div>
-
-### Can we rely on asymptotic normality? (3/4)
++ $\bar{X}$ is approximately normal
+  + Even if the individual values are not normal
 
 Furthermore,
 
@@ -105,11 +125,15 @@ $std.err(\bar{X})=\frac{\sigma}{\sqrt n}$
 
 <div class="notes">
 
+I'm sure you're all familiar with the Central Limit Theorem. It's the granddaddy of all approximation theorems. It states that the average of independent identically distributed random variables is approximately normal.
+
+The rule of thumb is that you can trust the normal approximation when the sample size is greater than 30. There is a lot that you can quibble about with respect to the cut-off of 30, but we're not going to get too fussy about this.
+
 You can also show easily that the expected value of the sample mean is mu (the sample mean is an unbiased estimate of the population mean) and that the variance of the sample mean is the variance of an individual X value divided by the sample size n. Equivalently, the standard error of X-bar is the standard deviation of an individual value divided by the square root of the sample size.
 
 </div>
 
-### Can we rely on asymptotic normality? (4/4)
+### Can you rely on asymptotic normality? (3/3)
 
 What about: 
 
@@ -185,7 +209,9 @@ The original data set in this small artificial example is 2, 3, 7, 5, 6. The fir
 mad <- function(u) {mean(abs(u-mean(u)))}
 
 x <- c(2,3,7,5,6)
+x0 <- mean(x)
 m0 <- mad(x)
+x1 <- mean(x[-1])
 m1 <- mad(x[-1])
 m2 <- mad(x[-2])
 m3 <- mad(x[-3])
@@ -195,11 +221,51 @@ mn <- mean(c(m1, m2, m3, m4, m5))
 sn <- sd(c(m1, m2, m3, m4, m5))
 ```
 
-$MAD$ (`r paste(x, sep=",")`) = `r m0`
+Calculate $MAD$ (`r paste(x, sep=",")`)
+
+Note that $\bar{X}=`r x0`$.
 
 $\ $
 
-$MAD$ (`r paste(x[-1], sep=",")`) = `r m1` 
+$\frac{1}{5}(|`r x[1]`-`r x0`|+|`r x[2]`-`r x0`|+|`r x[3]`-`r x0`|+|`r x[4]`-`r x0`|+|`r x[5]`-`r x0`|)$ 
+
+$\ $
+
+$\frac{1}{5}(`r abs(x[1]-x0)`+`r abs(x[2]-x0)`+`r abs(x[3]-x0)`+`r abs(x[4]-x0)`+`r abs(x[5]-x0)`)$ 
+
+$\ $
+
+$\ \ $ = `r m0`
+
+<div class="notes">
+
+Then calculate a statistic (in this case, the mean absolute deviation). Do it first for the entire sample. Here are the actual calculations.
+
+</div>
+
+### Calculate MAD for each jackknife sample
+
+Calculate $MAD$ (`r paste(x[-1], sep=",")`) = `r m1` 
+
+Note that mean (`r paste(x[-1], sep=",")`) = `r x1`
+
+$\frac{1}{4}(|`r x[2]`-`r x1`|+|`r x[3]`-`r x1`|+|`r x[4]`-`r x1`|+|`r x[5]`-`r x1`|)$. 
+
+$\ $
+
+$\frac{1}{5}(`r abs(x[2]-x1)`+`r abs(x[3]-x1)`+`r abs(x[4]-x1)`+`r abs(x[5]-x1)`)$ 
+
+$\ $
+
+$\ \ $ = `r m1`
+
+<div class="notes">
+
+
+
+</div>
+
+### The remaining calculations
 
 $MAD$ (`r paste(x[-2], sep=",")`) = `r m2` 
 
@@ -211,11 +277,11 @@ $MAD$ (`r paste(x[-5], sep=",")`) = `r m5`
 
 <div class="notes">
 
-Then calculate a statistic (in this case, the mean absolute deviation). Do it first for the entire sample. Then do it for each jackknife subsample. Notice that there is some variation in the results from one jackknife subsample to another.
+Here are the results for the remaining jackknife sample. Notice that there is some variation in the results from one jackknife subsample to another.
 
 </div>
 
-### The jackknife (4/4)
+### Mean and standard deviations for the jackknife samples
 
 + MAD (Full sample) = `r m0`
 + Average MAD (Jackknife subsamples) = `r mn`
@@ -298,7 +364,7 @@ MAD(`r paste(b1[500, ], sep=",")`) = `r m[500]`
 
 <div class="notes">
 
-Here's what you might do with the bootstrap samples. Suppose we are interested in the behavior of the mean absolute deviation for this particular dataset. You can calculate that statistic for each bootstrap sample. It is 1.52 for the first bootstrap sample, 1.28 for the second bootstrap sample, and so forth. Notice how much this statistic varies from one sample to the next.
+Here's what you might do with the bootstrap samples. Suppose you are interested in the behavior of the mean absolute deviation for this particular dataset. You can calculate that statistic for each bootstrap sample. It is 1.52 for the first bootstrap sample, 1.28 for the second bootstrap sample, and so forth. Notice how much this statistic varies from one sample to the next.
 
 </div>
 
@@ -310,7 +376,7 @@ Here's what you might do with the bootstrap samples. Suppose we are interested i
 
 <div class="notes">
 
-The average across all the bootstrap samples is a bit smaller than the estimate for the original data. This indicates, as we noticed before with the jackknife, a small amount of bias.
+The average across all the bootstrap samples is a bit smaller than the estimate for the original data. This indicates, as you noticed before with the jackknife, a small amount of bias.
 
 The standard deviation from the bootstrap mean absolute deviations is an estimate of the standard error of that statistic. It is fairly large, but as noted earlier, not too much of a surprise.
 
@@ -328,7 +394,7 @@ ggsave("../images/histogram01.png", g1, width=w, height=h, units = "in")
 
 <div class="notes">
 
-This is a histogram of the 500 bootstrapped estimates of the mean absolute deviation. Notice that it is "patchy" and does not follow a smooth bell shaped curve. This is an important issue that we will address when computing confidence intervals.
+This is a histogram of the 500 bootstrapped estimates of the mean absolute deviation. Notice that it is "patchy" and does not follow a smooth bell shaped curve. This is an important issue that you will address when computing confidence intervals.
 
 </div>
 
@@ -409,7 +475,7 @@ ggsave("../images/intuition0.png", intuition0, width=w, height=h, unit="in")
 
 <div class="notes">
 
-Suppose we have inside knowledge about the true probabilities for the data in our sample. Here is a cumulative distribution function that can generate data for a particular distribution.
+Suppose you have inside knowledge about the true probabilities for the data in our sample. Here is a cumulative distribution function that can generate data for a particular distribution.
 
 The cumulative distribution allows you to compute the cumulative probability for any data value. Select the data value on the X axis, project up to the curve and slide horizontally to read the cumulative probability on the Y axis.
 
@@ -1057,7 +1123,7 @@ Output Data Set            BOOTSAMPLE
 
 <div class="notes">
 
-Here is part of the output from surveyselect. The original dataset has 200 observations. We are creating 500 replicates using sampling with replacement. That creates a dataset of 100,000 observations.
+Here is part of the output from surveyselect. The original dataset has 200 observations. You are creating 500 replicates using sampling with replacement. That creates a dataset of 100,000 observations.
 
 </div>
 
@@ -1305,6 +1371,22 @@ You can get confidence intervals and hypothesis tests fairly easily as well. Go 
 
 </div>
 
+### Bootstrap in SPSS
+
+![](spss-bootstrapping.png)
+
+https://www.ibm.com/products/spss-bootstrapping
+
+<div class="notes">
+
+SPSS has a special add-on for bootstrapping. Thanks to Karen Grace-Martin for finding this. It is a separate license from SPSS, so you may or may not have it. I did not get a chance to investigate this in any detail, but it looks to work similarly to Stata. You find a place with standard errors and/or confidence intervals are computed in the main SPSS package and if you have the add-on package, you can request that the traditional standard errors and confidence intervals be replaced with bootstrap standard errors and confidence intervals.
+
+According to their website, you can use this module to "etimate standard errors and confidence intervals of a population parameter such as a mean, median, proportion, odds ratio, correlation coefficient, regression coefficient or others. Control the numbers of bootstrap samples, set a random number seed and indicate whether a simple or stratified method is appropriate."
+
+You could also use the Python or R add-ons to SPSS to run a bootstrap. I am not familiar enough with either to show an example.
+
+</div>
+
 ### Break #3
 
 + What have you learned
@@ -1332,7 +1414,7 @@ If you find yourself in one of these settings, I would encourage you to find a f
 
 I call this the "lemming school of research" which is a reference to the warning about peer pressure that almost every parent has nagged their children with ("If all your friends jumped off a cliff, would you jump off the cliff as well?").
 
-It actually is not as bad as I make it sound. If a certain methodology has survived the peer reviewe process, that gives you a bit more confidence that you can survive the peer review process as well if you emulate their approach. There are no guarantees, of course, but this is perhaps an illustration of a more positive message: "there is safety in numbers."
+It actually is not as bad as I make it sound. If a certain methodology has survived the peer review process, that gives you a bit more confidence that you can survive the peer review process as well if you emulate their approach. There are no guarantees, of course, but this is perhaps an illustration of a more positive message: "there is safety in numbers."
 
 The three settings I want to discuss are multiple groups, time series, and regression models.
 
