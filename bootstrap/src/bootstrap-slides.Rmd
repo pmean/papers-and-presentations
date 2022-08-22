@@ -16,6 +16,11 @@ suppressMessages(
     library(tidyverse)
   )
 )
+suppressMessages(
+  suppressWarnings(
+    library(rpart)
+  )
+)
 # Width and height of all graphs
 w=6
 h=3
@@ -27,7 +32,7 @@ h=3
 
 <div class="notes">
 
-
+Most of you should be familiar with the components and stages that The Analysis Factor uses to classify their talks. This talk is in Stage 3, Extensions of Linear Models. It covers a pretty broad swath, but might be considered as interpreting results. Perhaps validating results might be a second component.
 
 </div>
 
@@ -43,7 +48,9 @@ The goal is not to cover every possible application of the bootstrap.
 
 <div class="notes">
 
+Much of the material about bootstraps is either very specific to one problem or very mathematical. Althoug a few formulas are needed, I will try to avoid too much mathematics. I also want to give an appreciation of the broad range of areas where the bootstrap is appropriate. If you want to implement the bootstrap yourself, you need some basic programming skills, and I will talk about those skills. But if the programming is beyond you, don't fret because bootstrapping is automated for several commonly used settings.
 
+It's not possible to cover every possible application of the bootstrap today. I hope just to get you a bit more comfortable with the methodology in general.
 
 </div>
 
@@ -56,10 +63,6 @@ The goal is not to cover every possible application of the bootstrap.
 + Special settings
 
 <div class="notes">
-
-Here is the abstract that I provided. I am including it here to remind myself what I promised to talk about.
-
-The bootstrap is a methodology derived by Bradley Efron in the 1980s that provides a reasonable approximation to the sampling distribution of various "difficult" statistics. Difficult statistics are those where there is no mathematical theory to establish a distribution. It is also useful when you don't trust the mathematical theory because of a small sample size or potential violations of the underlying assumptions. The bootstrap is also a mechanism used by many machine learning algorithms to avoid overfitting. This talk will orient you to the general mechanisms of the bootstrap algorithm and illustrate its application in a couple of simple settings.
 
 This talk will cover four major areas.
 
@@ -77,7 +80,7 @@ Then I will discuss some special settings where you might consider more complex 
 
 <div class="notes">
 
-
+Let's start with a historical overview.
 
 </div>
 
@@ -90,7 +93,7 @@ Then I will discuss some special settings where you might consider more complex 
 
 <div class="notes">
 
-I want to provide a bit of historical context. Before the bootstrap came along, researchers relied on a variety of mathematical theorems like the Central Limit Theorem and extensions to the Central Limit Theorem to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses.
+Before the bootstrap came along, researchers relied on a variety of mathematical theorems like the Central Limit Theorem and extensions to the Central Limit Theorem to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses.
 
 The bootstrap represents an early attempt to use the power of computer simulation to estimate bias, calculate standard errors, produce confidence intervals, and test hypotheses. The bootstrap provides these answers in many settings where you can't find a version of the Central Limit Theorem that would apply or when you don't trust the approximation. I'll provide a brief overview of the jackknife, an earlier approach that the bootstrap was based on. Then I'll talk about Bradley Efron's work in the 1970's and 1980's to develop the bootstrap and to establish the mathematical principles that make the bootstrap work in so many different areas. Finally, I will talk about how bootstrapping came to be relied on in various machine learning algorithms.
 
@@ -108,18 +111,13 @@ I need to start with a book that I used when I was in graduate school. The title
 
 ### Can you rely on asymptotic normality? (2/3)
 
-+ $\bar{X}$ is approximately normal
-  + Even if the individual values are not normal
++ $\bar{X}$ is approximately normal, even if the individual values are not normal.
 
 Furthermore,
 
 $E[\bar{X}]=\mu$
 
-$\ $
-
 $Var(\bar{X})=\frac{\sigma^2}{n}$
-
-$\ $
 
 $std.err(\bar{X})=\frac{\sigma}{\sqrt n}$
 
@@ -223,19 +221,17 @@ sn <- sd(c(m1, m2, m3, m4, m5))
 
 Calculate $MAD$ (`r paste(x, sep=",")`)
 
-Note that $\bar{X}=`r x0`$.
+Note that mean (`r paste(x[-1], sep=",")`) = `r x0`.
 
 $\ $
 
-$\frac{1}{5}(|`r x[1]`-`r x0`|+|`r x[2]`-`r x0`|+|`r x[3]`-`r x0`|+|`r x[4]`-`r x0`|+|`r x[5]`-`r x0`|)$ 
+$\ $ $(|`r x[1]`-`r x0`|+|`r x[2]`-`r x0`|+|`r x[3]`-`r x0`|+|`r x[4]`-`r x0`|+|`r x[5]`-`r x0`|)/5$
 
-$\ $
+$\ $ $(`r abs(x[1]-x0)`+`r abs(x[2]-x0)`+`r abs(x[3]-x0)`+`r abs(x[4]-x0)`+`r abs(x[5]-x0)`)/5$
 
-$\frac{1}{5}(`r abs(x[1]-x0)`+`r abs(x[2]-x0)`+`r abs(x[3]-x0)`+`r abs(x[4]-x0)`+`r abs(x[5]-x0)`)$ 
+$\ $ $`r sum(abs(x[1]-x0)+abs(x[2]-x0)+abs(x[3]-x0)+abs(x[4]-x0)+abs(x[5]-x0))`/5$
 
-$\ $
-
-$\ \ $ = `r m0`
+$\ $ `r m0`
 
 <div class="notes">
 
@@ -245,23 +241,23 @@ Then calculate a statistic (in this case, the mean absolute deviation). Do it fi
 
 ### Calculate MAD for each jackknife sample
 
-Calculate $MAD$ (`r paste(x[-1], sep=",")`) = `r m1` 
+Calculate $MAD$ (`r paste(x[-1], sep=",")`)
 
 Note that mean (`r paste(x[-1], sep=",")`) = `r x1`
 
-$\frac{1}{4}(|`r x[2]`-`r x1`|+|`r x[3]`-`r x1`|+|`r x[4]`-`r x1`|+|`r x[5]`-`r x1`|)$. 
+$\ $ 
 
-$\ $
+$\ $ $(|`r x[2]`-`r x1`|+|`r x[3]`-`r x1`|+|`r x[4]`-`r x1`|+|`r x[5]`-`r x1`|)/4$. 
 
-$\frac{1}{5}(`r abs(x[2]-x1)`+`r abs(x[3]-x1)`+`r abs(x[4]-x1)`+`r abs(x[5]-x1)`)$ 
+$\ $ $(`r abs(x[2]-x1)`+`r abs(x[3]-x1)`+`r abs(x[4]-x1)`+`r abs(x[5]-x1)`)/4$ 
 
-$\ $
+$\ $ $`r abs(x[2]-x1)+abs(x[3]-x1)+abs(x[4]-x1)+abs(x[5]-x1)`/4$ 
 
-$\ \ $ = `r m1`
+$\ $ `r m1`
 
 <div class="notes">
 
-
+Then repeat the calculation with the first observation left out. Notice that we are dividing now by four rather than by five.
 
 </div>
 
@@ -293,7 +289,7 @@ The average of the jackknife subsamples is a bit less than 1.68. This indicates 
 
 </div>
 
-### Bradley Efron's contribution (1/5)
+### Bradley Efron's contribution (1/6)
 
 ![Figure 3. Photograph of Bradley Efron with President Bush](../images/bradley-efron-02.jpg)
 
@@ -313,7 +309,7 @@ It turns out that the jackknife works in a variety of settings, but fails badly 
 
 </div>
 
-### Bradley Efron's contribution (2/5)
+### Bradley Efron's contribution (2/6)
 
 The bootstrap sample=sampling with replacement.
 
@@ -323,6 +319,8 @@ b1 <- matrix(sample(x, 2500, replace=TRUE), nrow=500)
 m <- apply(b1, 1, mad)
 mn <- mean(m)
 sn <- sd(m)
+b <- b1[ 1, ]
+b0 <- mean(b)
 ```
 
 The original data: (`r paste(x, collapse=", ")`)
@@ -350,9 +348,31 @@ One big advantage of the bootstrap samples is that you can do this hundreds or e
 
 </div>
 
-### Bradley Efron's contribution (3/5)
+### Bradley Efron's contribution (3/6)
 
-MAD(`r paste(b1[1, ], sep=",")`) = `r m[1]`
+Calculate $MAD$ (`r paste(b, sep=",")`)
+
+Note that mean (`r paste(b, sep=",")`) = `r mean(b)`.
+
+$\ $
+
+$\ $ $(|`r b[1]`-`r b0`|+|`r b[2]`-`r b0`|+|`r b[3]`-`r b0`|+|`r b[4]`-`r b0`|+|`r b[5]`-`r b0`|)/5$
+
+$\ $ $(`r abs(b[1]-b0)`+`r abs(b[2]-b0)`+`r abs(b[3]-b0)`+`r abs(b[4]-b0)`+`r abs(b[5]-b0)`)/5$
+
+$\ $ $`r sum(abs(b[1]-b0)+abs(b[2]-b0)+abs(b[3]-b0)+abs(b[4]-b0)+abs(b[5]-b0))`/5$
+
+$\ $ `r m[1]`
+
+<div class="notes">
+
+Here are the calculations for the mean absolute deviation for the first bootstrap sample. 
+
+This is not difficult, but you need to repeat the calculations 499 more times.
+
+</div>
+
+### Bradley Efron's contribution (4/6)
 
 MAD(`r paste(b1[2, ], sep=",")`) = `r m[2]`
 
@@ -368,7 +388,7 @@ Here's what you might do with the bootstrap samples. Suppose you are interested 
 
 </div>
 
-### Bradley Efron's contribution (4/5)
+### Bradley Efron's contribution (5/6)
 
 + MAD (Full sample) = `r m0`
 + Average MAD (Bootstrap samples) = `r round(mn, 3)`
@@ -382,7 +402,7 @@ The standard deviation from the bootstrap mean absolute deviations is an estimat
 
 </div>
 
-### Bradley Efron's contribution (5/5)
+### Bradley Efron's contribution (6/6)
 
 ```{r}
 g1 <- ggplot(data.frame(m=m), aes(x=m)) + 
@@ -398,7 +418,7 @@ This is a histogram of the 500 bootstrapped estimates of the mean absolute devia
 
 </div>
 
-### A bit of intuition about the bootstrap (1/4)
+### A bit of intuition about the bootstrap (1/6)
 
 ```{r}
 # Generate cumulative distribution function (CDF)
@@ -489,7 +509,27 @@ If you had inside knowledge, enough to specify the cumulative distribution funct
 
 </div>
 
-### A bit of intuition about the bootstrap (2/4)
+### A bit of intuition about the bootstrap (2/6)
+
+```{r}
+# Plot CDF
+a0 <- c(0.45, 1, 1-log(rev(y0)), 8, 9.43)
+b0 <- c(0,    0, y0,     1, 1)
+data.frame(a0, b0) %>%
+  ggplot(aes(a0, b0)) +
+    geom_line(col="darkgray", size=1.5) +
+    scale_x_continuous(breaks=2*(0:4)) +
+    xlab(" ") +
+    ylab(" ") +
+    expand_limits(x=0) -> intuitionx
+ggsave("../images/intuitionx.png", intuitionx, width=w, height=h, unit="in")
+```
+
+![Figure 6. An alternative cumulative density function](../images/intuitionx.png)
+
+
+
+### A bit of intuition about the bootstrap (3/6)
 
 ```{r}
 # Add uniforms to CDF graph
@@ -514,7 +554,7 @@ for (i in 1:10) {
 ggsave("../images/intuition1.png", intuition1, width=w, height=h, units = "in")
 ```
 
-![Figure 6. Using random uniform values to simulate data from a cumulative distribution function](../images/intuition1.png)
+![Figure 7. Using random uniform values to simulate data from a cumulative distribution function](../images/intuition1.png)
 
 <div class="notes">
 
@@ -526,7 +566,35 @@ Of course, most of the time, you can't run this Monte Carlo simulation without m
 
 </div>
 
-### A bit of intuition about the bootstrap (3/4)
+### A bit of intuition about the bootstrap (4/6)
+
+```{r}
+# Add uniforms to CDF graph
+a1 <- 1-log(1-y1)
+intuitiony <- intuitionx
+for (i in 1:10) {
+  intuitiony +
+    geom_segment(
+      x=0, 
+      y=y1[i], 
+      xend=a1[i], 
+      yend=y1[i]) +
+    geom_segment(
+      x=a1[i],
+      y=y1[i],
+      xend=a1[i],
+      yend=0)  +
+    geom_point(
+      x=a1[i], 
+      y=0, 
+      shape=1) -> intuitiony
+}
+ggsave("../images/intuitiony.png", intuitiony, width=w, height=h, units = "in")
+```
+
+![Figure 8. Using random uniform values to simulate data from an alternative cumulative distribution function](../images/intuitiony.png)
+
+### A bit of intuition about the bootstrap (5/6)
 
 ```{r}
 data.frame(x3, y3) %>%
@@ -537,7 +605,7 @@ data.frame(x3, y3) %>%
 ggsave("../images/intuition3.png", intuition3, width=w, height=h, units = "in")
 ```
 
-![Figure 7. Estimate of cumulative density function from the data](../images/intuition3.png)
+![Figure 9. Estimate of cumulative density function from the data](../images/intuition3.png)
 
 <div class="notes">
 
@@ -549,7 +617,7 @@ The empirical cumulative distribution function does a pretty good job. It is unb
 
 </div>
 
-### A bit of intuition about the bootstrap (4/4)
+### A bit of intuition about the bootstrap (6/6)
 
 ```{r}
 boot_data <- data.frame(x4=x4, y4=y4, n4=n4)
@@ -575,7 +643,7 @@ intuition3 +
 ggsave("../images/intuition4.png", intuition4, width=w, height=h, units = "in")
 ```
 
-![Figure 8. Random uniform values converted into a bootstrap](../images/intuition4.png)
+![Figure 10. Random uniform values converted into a bootstrap](../images/intuition4.png)
 
 <div class="notes">
 
@@ -589,7 +657,7 @@ Notice in this example that some of the data values appear two or more times and
 
 ### Meaning of the term "bootstrap"
 
-![Figure 9. Image of a bootstrap](../images/bootstrap-image.png)
+![Figure 11. Image of a bootstrap](../images/bootstrap-image.png)
 
 <div class="notes">
 
@@ -603,7 +671,7 @@ The origin of this phrase "Lift yourself up by your bootstraps" is unclear. Seve
 
 </div>
 
-### Bagging (1/4)
+### Random Forests/Bagging (1/5)
 
 + Portmanteau for bootstrap aggregation
   + Used in random forests
@@ -619,66 +687,93 @@ The basic building block for bagging in the random forest model is the CART mode
 
 </div>
 
-### Bagging (2/4)
+### Random Forests/Bagging (2/5)
 
+```{r}
+ca <- as.data.frame(cars)
+ca$yhat <- predict(rpart(dist~speed, data=ca))
+ggplot(ca, aes(speed, dist)) +
+  scale_x_continuous(breaks=(2:13)*2) +
+  geom_text(label="O", color="darkgray") +
+  geom_text(aes(y=yhat), label="P") +
+  geom_line(aes(y=yhat)) -> bag1
+ggsave("../images/bag1.png", bag1, width=w, height=h, units = "in")
+```
 
-![Figure 10. Illustration of a regression tree](../images/regression-tree.png)
+![Figure 11. Regression tree predictions from a single model](../images/bag1.png)
 
 <div class="notes">
 
-A regression tree is a model used for continuous outcomes. It finds optimal splits of the data that create subgroups where the outcome variable shows very little variation. This is an example from the Statology blog on how to fit CART models.
 
-Zach Bobbitt. How to Fit Classification and Regression Trees in R. Statology blog, 2020-11-22. Available in [html format][bobb1].
-
-[bobb1]: https://www.statology.org/classification-and-regression-trees-in-r/
-
-The graph shows a prediction model for baseball player salaries. If the numbers seem low, it is because the data comes form 1987. The first split is between years in the league. If it is less than 4.5, the node to the left shows a mean salary of 225.83 thousand dollars. If it is greater than 4.5, the node to the right shows an additional split: were the number of home runs less than 16.5, then another split is the number of home runs also less than 8.5 then the mean salary is 502.81 thousand dollars. I won't go through every branch, but each of the final nodes is a combination of splits involving years in the league or home runs.
 
 </div>
 
-### Bagging (3/4)
+### Random Forests/Bagging (3/5)
 
-![Figure 11. Image of a classification tree](../images/classification-tree.jpg)
+```{r}
+b <- sample(1:50, 500, replace=TRUE)
+cb <- ca[sort(b[1:50]), ]
+cb$yhat <- predict(rpart(dist~speed, data=cb))
+bag2 <- bag1
+bag2 +
+  geom_text(data=cb, aes(x=speed, y=yhat), label="B", color="red") +
+  geom_line(data=cb, aes(x=speed, y=yhat), label="B", color="red") -> bag2
+ggsave("../images/bag2.png", bag2, width=w, height=h, units = "in")
+```
+
+![Figure 12. Regression tree predictions from a bootstrap sample](../images/bag2.png)
 
 <div class="notes">
 
-This is an example of a classification tree. You use a classification tree when you are predicting a binary outcome.
+Here are the results from a bootstrap sample. Notice how the regression tree from the bootstrap sample differs slightly from the regression tree from the original sample.
 
-This is an example from the [Wikipedia page on decision tree learning][wik1]. It is work by Gilgoldm and published under a Creative Commons open source license (CC BY-SA 4.0) and is available for download [here][wik2].
-
-[wik1]: https://en.wikipedia.org/wiki/Decision_tree_learning
-[wik2]: https://commons.wikimedia.org/w/index.php?curid=90405437
-
-This classification tree creates splits that lead to probabilities that are homogenous (close to either 0 or 1). This tree looks at survival of passengers on the Titanic. The Titanic was a massive passenger ship, especially massive for its time. It was so big that it was considered unsinkable. It first sailed across the Atlantic in 1912, hit an iceberg, and sank like a stone. Many of the passengers died, but the deaths were not distributed evenly across all demographic groups.
-
-The classification tree for survival first splits by gender. For females, you can't improve things too much by splitting further. This group has a 0.73 survival probability and it represents 36% of the total data. For males, you can improve the homogeneity of the outcome by looking at age and the number of siblings. For males, being young (under 9.5 years of age) and not being part of a big family (two or fewer siblings) leads to a suvival probability of 0.89. But this is a small subset of the passengers, only 2% of the total.
-
-Both classification trees and regression trees have a tendency to overfit the data. They are also highly sensitive to small changes in the data. In fact, I would have a hard time recommending the use of these models at all.
-
-There is an approach, however, that largely overcomes these concerns. It is called an ensemble approach. You combine multiple regression or classification trees into a "forest." And you do this with the help of the bootstrap.
+The regression tree might have different cut points. It might have only a single cut point or maybe three or more cut points.
 
 </div>
 
-### Bagging (4/4)
 
-Bootstrap sample b=1: CART model predictions, $\hat{Y}_{(1)}$
+### Random Forests/Bagging (4/5)
 
-Bootstrap sample b=2: CART model predictions, $\hat{Y}_{(2)}$
+```{r}
+bag3 <- bag1
+for(i in 0:9) {
+  cb <- ca[sort(b[i*50+(1:50)]), ]
+  cb$yhat <- predict(rpart(dist~speed, data=cb))
+  bag3 +
+    geom_text(data=cb, aes(x=speed, y=yhat), label="B", color="red") +
+    geom_line(data=cb, aes(x=speed, y=yhat), label="B", color="red") -> bag3
+}
+ggsave("../images/bag3.png", bag3, width=w, height=h, units = "in")
+```
 
-Bootstrap sample b=3: CART model predictions, $\hat{Y}_{(3)}$
-
-...
-
-Bootstrap sample b=B: CART model predictions, $\hat{Y}_{(B)}$
-
-Final prediction: $\frac{1}{B}\sum_{b=1}^B \ \hat{Y}_b$
-
+![Figure 13. Regression tree predictions from multiple bootstrap samples](../images/bag3.png)
 
 <div class="notes">
 
-In bagging, you fit a model (in the case of Random Forests, you fit a CART model) to a few hundred or thousand bootstrap samples. Get predicted values for each model. Average those predicted values across all the bootstrap samples.
+Here are what the results look like for multiple bootstrap samples.
+
+You would average the predicted values across all the bootstrap predictions to get a final average prediction. 
+
+</div>
+
+
+### Random Forests/Bagging (5/5)
+
+Random forests are very good at
+
++ Modeling nonlinearities
++ Modeling interactions
++ Avoiding overfitting
+
+<div class="notes">
 
 There are some additional enhancements to the Random Forest models, but the key element is the bagging step.
+
+The regression tree itself has discrete jumps, so it is a bit artificial. But when you average across multiple trees, each having differing locations for the cut points and possibly a different number of cutpoints, this can end up producing a fairly broad range of nonlinearities.
+
+This example is a bit simplistic, but regression trees are very good at identifying interactions, and this becomes another strong feature of random forests.
+
+Finally, the random forest is really good at avoiding overfitting.
 
 Note: Each bootstrap sample might produce a different set of independent variables, so you can't say anything directly about which variables help the most in predicting the outcome. You can't get p-values or confidence intervals for individual independent variables. There are some indirect ways to assess this, but I will not talk about these.
 
@@ -799,151 +894,29 @@ With a thousand bootstrap samples, you would select the 25th and 975th observati
 
 </div>
 
-### Compute confidence intervals, BCa (1/5)
+### Compute confidence intervals, Bias corrected and accelerated (BCa)
 
-+ Bias adjustment (using bootstrap estimates)
-  + $\hat z_0=\Phi^{-1}(\frac{1}{B}(H(\hat\theta-\hat\theta^{(b)}))$ where
-    + H(x)=1 for $x \geq 0$, 0 for $x < 0$.
-    + $\Phi^{-1}$ is the percentile function for the standard normal distribution
-
-+ Acceleration (using jackknife)
-  + $\hat a = \frac{\sum_{i=1}^n(\hat\theta_{(.)}-\hat\theta_{(i)})^3}{6(\sum_{i=1}^n (\hat\theta_{(.)}-\hat\theta_{(i)})^2)^{3/2}}$
++ Very good convergence properties
++ Bias adjustment
++ Acceleration (skewness)
 
 <div class="notes">
 
-You can improve on the percentile confidence interval, but the work is tricky.
+There bootstrap standard error intervals and the percentile intervals work reasonably well, but you can improve significantly on the percentile interval using an approach known as bias correction and acceleration.
 
-So tricky that every reference that I reviewed showed these equations and immediately apologized for their complexity. There appears to be little intuition that you can discern from these formulas. The formula for z-hat-0 is a bit easier to follow, perhaps. It is an adjustment for bias.
+The work is tricky--So tricky that every reference that I reviewed showed these equations and immediately apologized for their complexity.
 
-The H function effectively counts the number of bootstrap estimates that are less than the estimate based on the original data. Divide by the number of bootstrap samples to get a proportion. Phi inverse converts this proportion into a percentile from a standard normal distribution. If exactly half of the bootstrap estimates are greater than the estimate based on the original data, then you get a big fat zero which means no bias adjustment.
+The bootstrap is good at identifying bias. It also allows you to look for skewness. The BCa approach shifts the percentiles to account for bias and skewness.
 
-The formula for a-hat is a bit harder to follow. Notice that it involves deviations from the mean raised to the third power, which seems to be akin to a measure of skewness.
+It's a bit counter-intuitive, because the percentile intervals already adjust for bias and skewness, but shifting the percentiles can improve things even more.
 
-Dr. Efron refers to it as an acceleration, because it relates to the second derivative of the score function.
+It's hard to define what "improve" means, but I'll try. When you compute a 90% confidence interval, you expect that coverage probability is 90%. That means that 90% of the samples from the same underlying population with the same size as your sample will produce bootstrap confidence intervals that contain the population mean.
 
-Remember that in Calculus, the first derivative is analogous to speed and the second derivative is analogous to acceleration.
+This 90% is only accurate for a sample size of infinity. For smaller sample sizes this is only approximate. The bigger the sample size the better the approximation.
 
-Don't ask me what the score function represents. Also don't ask me why the acceleration relies on a jackknife sample rather than a bootstrap sample. 
+Note that the approximation is based on the size of the original sample and not the number of bootstrap samples that you take.
 
-If z-hat-sub-0 is equal to zero, there is no adjustment to the confidence interval based on bias.
-
-If the jackknife estimates are perfectly symmetric, then a-hat is a big fat zero, meaning no adjustment to the confidence interval based on skewness.
-
-</div>
-
-### Compute confidence intervals, BCa (2/5)
-
-+ Replace $\alpha/2$ with
-  + $\Phi^{-1}(\hat z_0+\frac{\hat z_0+z_{\alpha/2}}{1-\hat a(\hat z_0+z_{\alpha/2})})$
-+ Replace $1-\alpha/2$ with
-  + $\Phi^{-1}(\hat z_0+\frac{\hat z_0+z_{1-\alpha/2}}{1-\hat a(\hat z_0+z_{1-\alpha/2})})$
-
-<div class="notes">
-
-The percentiles that you select from the bootstrap distribution are no longer at alpha/2 and 1-alpha/2, but are moved to account for bias and skewness in the bootstrap distribution.
-
-</div>
-
-### Percentiles with no adjustment (3/5)
-
-```{r}
-x <- seq(-3, 3, length=101)
-y1 <- pnorm(x)
-alpha <- 0.10
-a1 <-   alpha/2
-a2 <- 1-alpha/2
-z1 <- qnorm(  alpha/2)
-z2 <- qnorm(1-alpha/2)
-data.frame(x, y1) %>%
-  ggplot(aes(x, y1)) +
-    geom_line() +
-    geom_segment(x=z1, y= 0, xend=z1, yend=a1) +
-    geom_segment(x=z1, y=a1, xend=-3, yend=a1) +
-    geom_segment(x=z2, y= 0, xend=z2, yend=a2) +
-    geom_segment(x=z2, y=a2, xend=-3, yend=a2) -> g0
-  g0 +
-    scale_x_continuous(
-      name=" ",
-      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
-      minor_breaks=NULL) +
-    scale_y_continuous(
-      name=" ",
-      breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL) -> bca01
-ggsave("../images/bca01.png", bca01, width=w, height=h, units = "in")
-```
-
-![Figure 12. Graph of unadjusted percentiles](../images/bca01.png)
-
-<div class="notes">
-
-Here's a picture showing what the unadjusted percentiles look like for a 90% confidence interval. Z-0-hat is zero, so no bias adjustment and a-hat is also zero, so no adjustment for skewness. You would just choose the 5th and 95th percentiles of the bootstrapped estimates.
-
-</div>
-
-### Percentiles with bias adjustment (4/5)
-
-```{r}
-z0 <- -0.1
-z1 <- qnorm(  alpha/2)+2*z0
-z2 <- qnorm(1-alpha/2)+2*z0
-a1 <- pnorm(z1)
-a2 <- pnorm(z2)
-g0 + 
-    geom_segment(x=z1, y= 0, xend=z1, yend=a1, color="red") +
-    geom_segment(x=z1, y=a1, xend=-3, yend=a1, color="red") +
-    geom_segment(x=z2, y= 0, xend=z2, yend=a2, color="red") +
-    geom_segment(x=z2, y=a2, xend=-3, yend=a2, color="red") +
-    scale_x_continuous(
-      name=" ",
-      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
-      minor_breaks=NULL) +
-    scale_y_continuous(
-      name=" ",
-      breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL) -> bca02
-ggsave("../images/bca02.png", bca02, width=w, height=h, units = "in")
-```
-
-![Figure 13. Percentiles with bias adjustment](../images/bca02.png)
-
-<div class="notes">
-
-A bias adjustments shifts the z values to the left or the right. In this hypothetical case, the z values are shifted left by 0.2 units, and instead of using the instead of the 5th and the 95th percentiles, you would use would be the 3.3 percentile and the 92.6 percentile.
-
-</div>
-
-### Percentiles with acceleration adjustment (5/5)
-
-```{r}
-a_hat <- -0.08
-z1 <- qnorm(  alpha/2)/(1-a_hat*qnorm(  alpha/2))
-z2 <- qnorm(1-alpha/2)/(1-a_hat*qnorm(1-alpha/2))
-a1 <- pnorm(z1)
-a2 <- pnorm(z2)
-g0 + 
-    geom_segment(x=z1, y= 0, xend=z1, yend=a1, color="red") +
-    geom_segment(x=z1, y=a1, xend=-3, yend=a1, color="red") +
-    geom_segment(x=z2, y= 0, xend=z2, yend=a2, color="red") +
-    geom_segment(x=z2, y=a2, xend=-3, yend=a2, color="red") +
-    scale_x_continuous(
-      name=" ",
-      breaks=c(round(c(z1, z2), 2), -3, -1, 1, 3), 
-      minor_breaks=NULL) +
-    scale_y_continuous(
-      name=" ",
-      breaks=c(round(c(a1, a2), 3), (0:5)/5),
-      minor_breaks=NULL) -> bca03
-ggsave("../images/bca03.png", bca03, width=w, height=h, units = "in")
-```
-
-![Figure 14. Histogram of bootstrapped estimates](../images/bca03.png)
-
-<div class="notes">
-
-An adjustment for skewness also shifts the z values to the left or the right, though the shift is stronger on one side versus the other. In this hypothetical case, you would use would be the 2.9 percentile and the 92.7 percentile.
-
-These formulas are messy, and easy to get wrong, so I would recommend if you are programming from scratch that you stick one of the simpler approaches.
+The rate that the approximate coverage probability converges to the true coverage probability is a lot faster with the BCa adjustment. A lot faster.
 
 </div>
 
@@ -1041,6 +1014,7 @@ You just saw the general algorithms for estimating bias, calculating standard er
   + SAS
   + Stata
   + R
+  + SPSS
 
 <div class="notes">
 
@@ -1373,7 +1347,7 @@ You can get confidence intervals and hypothesis tests fairly easily as well. Go 
 
 ### Bootstrap in SPSS
 
-![](spss-bootstrapping.png)
+![](../images/spss-bootstrapping.png)
 
 https://www.ibm.com/products/spss-bootstrapping
 
