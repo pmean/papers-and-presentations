@@ -1348,13 +1348,13 @@ You can get confidence intervals and hypothesis tests fairly easily as well. Go 
 
 </div>
 
-### Bootstrap in SPSS
+### Bootstrap in SPSS (1/4)
 
-![](../images/spss-bootstrapping.png)
-
-https://www.ibm.com/products/spss-bootstrapping
+![](../images/spss-bootstrap1.png)
 
 <div class="notes">
+
+https://www.ibm.com/products/spss-bootstrapping
 
 SPSS has a special add-on for bootstrapping. Thanks to Karen Grace-Martin for finding this. It is a separate license from SPSS, so you may or may not have it. I did not get a chance to investigate this in any detail, but it looks to work similarly to Stata. You find a place with standard errors and/or confidence intervals are computed in the main SPSS package and if you have the add-on package, you can request that the traditional standard errors and confidence intervals be replaced with bootstrap standard errors and confidence intervals.
 
@@ -1363,6 +1363,38 @@ According to their website, you can use this module to "estimate standard errors
 You could also use the Python or R add-ons to SPSS to run a bootstrap. I am not familiar enough with either to show an example.
 
 </div>
+
+### Bootstrap in SPSS (2/4)
+
+![](../images/spss-bootstrap2.png)
+
+<div class="notes">
+
+If you use the menus in SPSS rather than syntax, you may notice a button that reads "Bootstrap". This is one such menu, after selecting ANALYZE | CORRELATE |BIVARIATE.
+
+</div>
+
+### Bootstrap in SPSS (3/4)
+
+![](../images/spss-bootstrap3.png)
+
+<div class="notes">
+
+When you click on that button a new dialog box appears. Generally, the default options are good at least 90% of the time.
+
+</div>
+
+### Bootstrap in SPSS (4/4)
+
+![](../images/spss-bootstrap4.png)
+
+<div class="notes">
+
+This is the output that SPSS produces.
+
+</div>
+
+
 
 ### Break #3
 
