@@ -72,7 +72,7 @@ suppressMessages(
 
 An Introduction to Analysis of Means
 
-Analysis of Means (ANOM) is an underappreciated methodology that has relevance to quality control and institutional comparisons. Unlike Analysis of Variance (ANOVA), which compares one group mean to another group mean, ANOM compares each group mean to the overall mean. The calculations in ANOM are simple and direct. ANOM also avoids many of the ambiguities inherent in the multiple comparisons used in ANOVA, and avoids a common misinterpretation about overlapping confidence intervals. This talk will illustrate the mechanics of calculating ANOM and provide context for when you should or should not use it.
+Analysis of Means (ANOM) is an under appreciated methodology that has relevance to quality control and institutional comparisons. Unlike Analysis of Variance (ANOVA), which compares one group mean to another group mean, ANOM compares each group mean to the overall mean. The calculations in ANOM are simple and direct. ANOM also avoids many of the ambiguities inherent in the multiple comparisons used in ANOVA, and avoids a common misinterpretation about overlapping confidence intervals. This talk will illustrate the mechanics of calculating ANOM and provide context for when you should or should not use it.
 
 </div>
 
@@ -120,7 +120,7 @@ Here is an example I am borrowing from a website, Statistics By Jim,
 
 https://statisticsbyjim.com/anova/post-hoc-tests-anova/
 
-A laboratory was studying hardness measures of some materials (arbirarily labelled A, B, C, and D) by compressing them until they break. The researchers measured strength for 6 different pieces of each material, for a total of 24 measurements.
+A laboratory was studying hardness measures of some materials (arbitrarily labelled A, B, C, and D) by compressing them until they break. The researchers measured strength for 6 different pieces of each material, for a total of 24 measurements.
 
 There are lots of different ways to measure the strength of a material. I don't know the exact details of how they did it for this study, so I am borrowing an image of strength testing from the NASA Johnson Space Center.
 
@@ -384,7 +384,7 @@ This is drawn like a control chart and uses control chart limits, but it is not 
 
 Most of the decision rules such as
 
-* Eight consecutive points on same size of the centerline
+* Eight consecutive points on same size of the center line
 
 * Two out of three outside two sigma limits
 
@@ -504,7 +504,7 @@ su %>%
 
 <div class="notes">
 
-This dataset comes from the SAS QC Guide. It represents deviations in label placement for a bottling machine. There are six different positions for this machine, and you want to find out if the deviations are substantially different for one or more positions.
+This data set comes from the SAS QC Guide. It represents deviations in label placement for a bottling machine. There are six different positions for this machine, and you want to find out if the deviations are substantially different for one or more positions.
 
 Here are the means and standard deviations for each position.
 
@@ -613,7 +613,7 @@ ggsave("images/plot-graph-03.png", plot=g3)
 
 <div class="notes">
 
-Here is the graph with the analysis of means limits. Your intuiton was correct. There are significant deviations to the left in positions 1 and 6 and a significant deviation to the right in position 4.
+Here is the graph with the analysis of means limits. Your intuition was correct. There are significant deviations to the left in positions 1 and 6 and a significant deviation to the right in position 4.
 
 Now, why would we compare to the overall mean rather than to zero? It depends on the context, but on these assembly lines, there are adjustments that you can make to change the positioning of labels across all positions, and those adjusted will never help you here. Because any overall change to the labels is either going to make positions 1 and 6 worse, or position 4 worse. You need to make interior adjustments rather than global adjustments.
 
@@ -878,7 +878,7 @@ Here are the plots of CAT scan rates. Notice that clinics 1 and 3 have lower rat
   + `r ubar` $\pm$ 2.57 $\sqrt{`r ubar`} \sqrt{\frac{`r M`-`r members[1]`}{(`r M`)(`r members[1]`)}}$
   + `r lo[1]` to `r hi[1]`
   + The rate is `r rate_per_thousand[1]`
-  + This clinic's CAT scan rate is not differnt from the overall CAT scan rate.
+  + This clinic's CAT scan rate is not different from the overall CAT scan rate.
   
 <div class="notes">
 
@@ -917,7 +917,7 @@ Here are the plots with analysis of means limits. The limits are slightly differ
 
 ### Other extensions of ANOM
 
-+ ANOM using ranks
++ ANOM using the range instead of the standard deviation
 + Multifactor studies
 + Nonparametric approaches
 + Testing variances
@@ -989,6 +989,46 @@ Finally, and possibly the most important point is about rewards and punishments.
 If you use Analysis of Means (or any statistical approach, for that matter) to decide who gets bonuses and who gets fired, you're making a big mistake.
 
 An unusual result for an individual or for a particular work group becomes the start of an investigation. Mindlessly offering rewards and punishments short-circuits the thinking process. I'm not saying that workers are never to blame. I just worry that statistics make it too easy to jump to conclusions.
+
+</div>
+
+### Resources, Nelson et al
+
+![Figure 24. Front cover of Nelson et al](images/nelson-book.png)
+
+<div class="notes">
+
+The book
+
+Peter R. Nelson, Peter S. Wludyka, Karen A.F. Copeland. The Analysis of Means. A Graphical Method for Comparing Means, Rates, and Proportions. ASA-Siam Series on Statistics and Applied Probability. Siam, Philadelphia PA, ASA, Alexandria VA, 2005.
+
+has everything you need including most of the extensions discussed earlier.
+
+</div>
+
+### Resources, SAS
+
+![Figure 25. Front cover of SAS manual](images/sas-book.png)
+
+<div class="notes">
+
+SAS put all its documentation online a couple of decades ago, and it is a great resource, even if you don't use SAS. This is the front "cover" of the documentation for PROC ANOM, and it is available at
+
+https://support.sas.com/documentation/onlinedoc/qc/142/anom.pdf
+
+My only complaint is that they did too much. The entire manual is 160 pages. About 25% of the content is general tutorials on the methodology itself and not SAS specific.
+
+</div>
+
+### Resources, R
+
+![Figure 26. Front page of R vignette on ANOM](images/r-vignette.png)
+
+<div class="notes">
+
+The quality of documentation in R is uneven, but any package that comes with a vignette is almost always well documented. A vignette is a document showing a few simple examples of how to use an R package and interpret the output. The vignette for the R package ANOM actually starts with some advanced examples, but you will find references in this vignette by the same author covering more basic examples.
+
+https://cran.r-project.org/web/packages/ANOM/vignettes/ANOM.pdf
 
 </div>
 
