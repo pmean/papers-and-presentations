@@ -46,19 +46,24 @@ Actually, that 300 comes from an article on Schizophrenia that I'll talk about i
 
 <div class="notes">
 
+Many applications in statistics specify two hypotheses about a population parameter. By tradition, the first hypothesis, H0 or the null hypothesis is a hypothesis with an equality and the second hypothesis, H1 or Ha or the alternative hypothesis is a hypothesis with an inequality.
 
+Here I am using theta as a generic parameter, but usually the hypothesis involves population means represented by the Greek letter mu, population proportions represented by the Greek letter pi, or regression coefficients represented by the Greek letter beta.
 
 </div>
 
 ### Three things that you need
 
-+ Research hypothesis
-+ Standard deviation of your outcome measure
-+ Minimum clinically important difference
++ To determine the appropriate sample size, you need
+  + Research hypothesis
+  + Standard deviation of your outcome measure
+  + Minimum clinically important difference
 
 <div class="notes">
 
+I get a lot of questions about sample size, and what I typically need before I can do any calculations are three things.
 
+First, I need a research hypothesis. Not every research study has a research hypothesis and I'll talk at the end about what you can do if you do not have a research hypothesis. But most studies do have a research hypothesis. Then I need a measure of variation, typically a standard deviation. If I can get a range, a standard error, a confidence interval, or an interquartile range, I can usually extrapolate. Finally, I need what is often called the minimum clinically important difference.
 
 </div>
 
@@ -137,7 +142,7 @@ There's a lot of other good software out there. Among the three listed here, I h
 
 <div class="notes">
 
-
+I want to show three different approaches to sample size calculations. Two involve programming from scratch, but you may find the power.t.test function to be easier to work with.
 
 </div>
 
@@ -251,7 +256,7 @@ Here are the actual power calculations for a sample size of 64 per group and an 
 
 </div>
 
-### Using power.t.test (1/2)
+### Using power.t.test (1/3)
 
 ```{r}
 estimated_power <- 
@@ -275,7 +280,7 @@ The nice thing about this function is that it can handle power calculations by s
 
 </div>
 
-### Using power.t.test (2/2)
+### Using power.t.test (2/3)
 
 ```{r}
 names(estimated_power)
@@ -286,7 +291,7 @@ names(estimated_power)
 The power.t.test function produces a list, and the key argument in the list is power. 
 </div>
 
-### Using power.t.test (2/2)
+### Using power.t.test (3/3)
 
 ```{r}
 estimated_power$power
