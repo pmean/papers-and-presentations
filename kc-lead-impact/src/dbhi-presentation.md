@@ -104,6 +104,10 @@ Like Dr. Kane, Dr. Wilson used a Bayesian model in his research and I provided s
 
 </div>
 
+### Housing and Urban Development
+
+![](../images/hud.jpg)
+
 ### Leveraging existing resources
 
 + Project Lead Safe Kansas City
