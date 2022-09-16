@@ -8,9 +8,101 @@ knit: (function(inputFile, encoding) {
   output_dir = "../results", output_format = "all") })  
 ---
 
-### Historical overview
+### How this all started
 
 ![](../images/bowles.png)
+
+<div class="notes">
+
+Back in 2018, the new Provost, Mauli Agrawal, convened a series of meetings for a group of people interested in data science. The goal was to talk about new research and teaching activities in this area. At the end of the meeting, Doug Bowles, stopped and talked to me about possibly helping with the work at a group he was running, the Center for Economic Information.
+
+</div>
+
+### The Center for Economic Information
+
+![](../images/cei.png)
+
+<div class="notes">
+
+The Center for Economic Information was started in 1994 and has worked with neighborhoods and communities in the Kansas City metropolitan area to provide them with data from a variety sources, including the Bureau of the Census.
+
+### Single family home ownership by neighborhood
+
+![](../images/map.png)
+
+<div class="notes">
+
+Here's a map showing single family home ownership by neighborhood.
+
+</div>
+
+### Neighborhood housing condition survey (1/2)
+
++ Fifteen ratings in three categories
+  + Structure
+  + Grounds
+  + Infrastructure
++ Classification of the parcel
+  
+<div class="notes">
+
+A major effort of CEI has been their development and validation of the neighborhood housing conditions survey (NHCS). This survey provides ratings for parcels: residential housing and other structures including vacant lots. The survey uses an five point ordinal rating of fifteen elements related to the quality of a housing unit. These address the structure of house itself (such as conditions of the roof, porch, and exterior paint), the grounds around the house (such as the lawn, litter, and open storage) and the  infrastructure (such as the sidewalk, curbs, and street lights).
+
+</div>
+
+### Neighborhood housing condition survey (2/2)
+
++ Evaluation done at the street level
+  + IRB review: exempt
+    + Observations in a public setting
+  + Relatively inexpensive
+  + Broad coverage across neighborhoods and years
+    + 22 surveys from 2000 through 2014
+    + 260,000 homes surveyed
++ Does the home environment influence health?
+  + YES!!!
+  
+<div class="notes">
+
+CEI researchers in teams of two. The driver went slowly down the street and the researcher riding shotgun entered data on each house along the street.
+
+Because this data collection involved observations in a public setting, the IRB quickly determined that this study was exempt.
+
+It is relatively inexpensive, about $6 per house, when all the costs are accounted for.
+
+The survey provided a ton of data. Over a fifteen year period, CEI collected data on over 260,000 houses.
+
+The home in which you live affects many aspects of your social and economic well being. Can it affect your health as well. The answer is a strong YES!
+
+Much of my early work with CEI involved providing informal support to two students working at CEI. Both produced dissertations that addressed the influence of housing quality on health.
+
+</div>
+
+### "An Interdisciplinary Approach to Health Disparities Research and Intervention: The Case of Childhood Asthma in Kansas City"
+
+![](../images/kane.png)
+
+<div class="notes">
+
+Natalie Kane, pictured here, wrote a dissertation examining how asthma can be exacerbated by poor housing conditions and other environmental variables such as proximity to point sources of pollution.
+
+She graduated from UMKC in 2020, worked as a post-doc at Children's Mercy under the direction of Mark Hoffman, and is now working for My Sidewalk, an organization helping communities to access data useful for planning and lobbying efforts.
+
+I offered some informal advice about some Bayesian models she was using. She actually had done everything quite well, so my job was mostly explaining how to interpret these models and how to display her results properly.
+
+</div>
+
+### "Childhood Lead Poisoning and the Built Environment in Kansas City, Missouri, 2000-2013"
+
+![](../images/wilson.png)
+
+<div class="notes">
+
+Neal Wilson, pictured here, wrote a dissertation looking at lead poisoning in children. He graduated in 2021 and is currently the Associate Director for CEI. He also teaches Introduction to Economics and Economic History at the California Institute of the Arts.
+
+Like Dr. Kane, Dr. Wilson used a Bayesian model in his research and I provided some informal advice.
+
+</div>
 
 ### Leveraging existing resources
 
