@@ -26,6 +26,8 @@ Back in 2018, the new Provost, Mauli Agrawal, convened a series of meetings for 
 
 The Center for Economic Information was started in 1994 and has worked with neighborhoods and communities in the Kansas City metropolitan area to provide them with data from a variety sources, including the Bureau of the Census.
 
+</div>
+
 ### Single family home ownership by neighborhood
 
 ![](../images/map.png)
@@ -78,13 +80,13 @@ Much of my early work with CEI involved providing informal support to two studen
 
 </div>
 
-### "An Interdisciplinary Approach to Health Disparities Research and Intervention: The Case of Childhood Asthma in Kansas City"
+### Natalie Kane, Childhood asthma
 
 ![](../images/kane.png)
 
 <div class="notes">
 
-Natalie Kane, pictured here, wrote a dissertation examining how asthma can be exacerbated by poor housing conditions and other environmental variables such as proximity to point sources of pollution.
+Natalie Kane, pictured here, wrote a dissertation examining how asthma can be exacerbated by poor housing conditions and other environmental variables such as proximity to point sources of pollution. The title of her dissertation is "An Interdisciplinary Approach to Health Disparities Research and Intervention: The Case of Childhood Asthma in Kansas City"
 
 She graduated from UMKC in 2020, worked as a post-doc at Children's Mercy under the direction of Mark Hoffman, and is now working for My Sidewalk, an organization helping communities to access data useful for planning and lobbying efforts.
 
@@ -92,13 +94,13 @@ I offered some informal advice about some Bayesian models she was using. She act
 
 </div>
 
-### "Childhood Lead Poisoning and the Built Environment in Kansas City, Missouri, 2000-2013"
+### Neal Wilson, childhood lead poisoning
 
 ![](../images/wilson.png)
 
 <div class="notes">
 
-Neal Wilson, pictured here, wrote a dissertation looking at lead poisoning in children. He graduated in 2021 and is currently the Associate Director for CEI. He also teaches Introduction to Economics and Economic History at the California Institute of the Arts.
+Neal Wilson, pictured here, wrote a dissertation looking at lead poisoning in children. The title of his dissertation is "Childhood Lead Poisoning and the Built Environment in Kansas City, Missouri, 2000-2013". He graduated in 2021 and is currently the Associate Director for CEI. He also teaches Introduction to Economics and Economic History at the California Institute of the Arts.
 
 Like Dr. Kane, Dr. Wilson used a Bayesian model in his research and I provided some informal advice.
 
@@ -108,36 +110,131 @@ Like Dr. Kane, Dr. Wilson used a Bayesian model in his research and I provided s
 
 ![](../images/hud.jpg)
 
-### Leveraging existing resources
-
-+ Project Lead Safe Kansas City
-  + 20 years of data
-  + 18 thousand health encounters per year
-+ Exterior based housing survey
-  + Quick, easy, cost effective ($6.50 per parcel)
-  + Can be done at the street level
-  + Extensive quality control procedures
-  + Used routinely for over 260 thousand houses over 14 years.
-
 <div class="notes">
 
-The work we propose takes advantage of two key resources that already exist. The first is data from the Lead Safe Kansas City project. This program, funded by HUD, tests children for lead poisoning, home testing, and remediates if lead hazards are found. There is a massive amount of information from this project, 20 years worth of data and 18 thousand health encounters per year.
-
-The second resource is an exterior based housing survey developed by the Center for Economic Information and used in many Kansas City Missouri and Kansas City Kansas neighborhoods over the past two decades. It can be conducted by graduate students after a carefully established training program. The individual items in the survey, such as roofing condition are easily observed at the street level and can be done quickly and accurately. Our team has built extensive quality control procedures into the survey. It can be done quickly and cheaply. Our team has collected data on over 260 thousand houses over a 14 year period.
+In the summer of 2020, I worked on a grant with CEI and partners at Children's Mercy and the Kansas City, Missouri Department of Health. We also worked on a second grant with the National Center for Healthy Housing, but that didn't get funded, so I won't discuss it further here.
 
 </div>
 
-### Aim 1. 
+### Notice of Funding Availability (FR-6400-N-15)
 
-+ Quantify improvements made by KC Lead Safe
-  + Trends over time versus national trends
-  + Identify and evaluate children who move into remediated homes.
+![](../images/nofa.png)
+
 
 <div class="notes">
 
-We will describe the extent to which different interventions have made housing lead safe by HUD standards and how this leads to fewer lead poisoned children among those who move into a home after remediation activity.
+Here's the first page of the notice of funding availability (NOFA) for the grant we applied to. NOFA is an acronym for Housing and Urban Development. You'll see other acronyms like RFA for NIH. Don't bother trying to read the NOFA here. A Google search of FR-6400-N-15 would bring it up if you are curious.
+
+This NOFA is 68 pages long and everyone involved with writing this grant read through all 68 pages multiple times. I can't stress enough how important it is to read the NOFA.
+
+In the first paragraph of the NOFA, HUD states that "Failure to respond accurately to any submission requirement could result in an incomplete or noncompetitive proposal."
+
+Let's take a quick look at a few of these submission requirements.
 
 </div>
+
+### Grant proposal guidelines
+
++ Eligible applicants
+  + Priority applicants
++ Unfundable applications
++ Priority research topics
+
+<div class="notes">
+
+Most calls for grants will list who is eligible to apply for the grant. Take special note of any priority applicants. This particular grant gives some priority to new applicants. Others may give priority to young researchers or researchers from Historically Black Colleges and Universities. If you fall into a priority group, make sure that the granting agency knows this.
+
+Most calls for grants will also list things that they will not fund. The HUD grant would not fund "applications that involve laboratory testing on living organisms with the exception of laboratory testing on animals that are residential pests (e.g., cockroaches, bed bugs, mice, etc.)"
+
+The NOFA mentions numerous priority topics. One of them relevant to our application is "Evaluation of the effectiveness of specific residential lead hazard control interventions."
+
+</div>
+
+### Pre-application
+
++ Cover sheet
++ 200 word or less abstract
++ Five page narrative
++ Biosketches
+  + Up to three key personnel
+  + One page limit per biosketch
++ Estimated total funding
+
+<div class="notes">
+
+HUD does something that I wish more granting agencies would do. HUD asks you to submit a pre-application and only those proposals that score highly on the pre-application will be asked to produce a lengthier and more detailed proposal.
+
+The structure and the page limits are very important here. There are restrictions on margins and font sizes. HUD notes that any pages in excess of the page limit will not be considered in evaluating the pre-proposal or full proposal.
+
+</div>
+
+### Full application
+
++ Proposal (25 page limit)
++ Abstract, two pages
++ Resumes, three pages per resume
++ Organizational chart
++ Letters of commitment
++ Bibliography
++ Additional materials/appendices, 20 page limit
++ Budget using form HUD424CBW
+
+<div class="notes">
+
+While the limit for the proposal is 25 pages, there are additional items outside this page limit. Most of these have their own limits.
+
+
+
+</div>
+
+### Rating factors (100 points possible)
+
++ Capacity of the Applicant and Relevant Organizational Experience
+  + Two elements (13 + 7 = 20 points)
++ Need for the research
+  + Five elements (12 + 4 + 7 + 4 + 4 = 31 points)
++ Soundness of Approach
+  + Four elements (20 + 5 + 1 + 5 = 31 points)
++ Leveraging Resources
+  + One element (6 points)
++ Achieving Results and Project Management
+  + Four elements (3 + 6 + 2 + 1 = 12 points)
+
+<div class="notes">
+
+HUD provides a rating system for grants with various points for each element. You want to make sure that you document anything that addresses any element, no matter how small. The National Center for Healthy Housing grant that we collaborated on--it missed being funded by a single point.
+  
+</div>
+
+### Examples of our focus (1/2)
+
++ Quality assurance plan (5 points)
+  + You must describe the quality assurance mechanisms that will be integrated into your project design to ensure the validity and quality of the results. Applicants that receive awards will be required to submit a quality assurance plan to HUD. You should plan for this and include quality assurance activities in your study work plan.
+  
+<div class="notes">
+
+We made sure to document a solid quality assurance plan. We even designated a quality assurance role for one of the invesigators.
+
+</div>
+  
+### Examples of our focus (2/2)
+
++ Leveraging resources (6 points)
+  + This factor addresses your ability to obtain other resources that can be combined with HUD’s funding to increase the effectiveness of the proposed study. To receive points, your proposal should demonstrate that the effectiveness of HUD’s Technical Studies grant funds is being increased by securing other resources or by structuring the study in a cost-effective manner, such as integrating the work into an existing study that will be concurrent with your proposed study.
+
+<div class="notes">
+
+It was tricky to attach a dollar value to it, but we claimed the neighborhood housing conditions survey data and a resources that would be combined with additional data to increase the effectiveness of the proposal.
+
+</div>
+
+### Break
+
++ Neal Wilson will talk now
+  + Building a research team
+  + Aim 1 of the grant
++ Then I will return
+  + Aim 2 of the grant  
 
 ### Aim 2
 
@@ -149,6 +246,8 @@ We will describe the extent to which different interventions have made housing l
 <div class="notes">
 
 Our agenda is to develop a primary prevention technique based on exterior housing observations as well as neighborhood level social determinants of health. The goal will be to develop a data-driven, housing-based index that Lead Hazard Control programs can use to select the homes most in need of lead-based hazard remediation.
+
+The exterior based housing survey was developed by the Center for Economic Information and used in many Kansas City Missouri and Kansas City Kansas neighborhoods over the past two decades. It can be conducted by graduate students after a carefully established training program. The individual items in the survey, such as roofing condition are easily observed at the street level and can be done quickly and accurately. Our team has built extensive quality control procedures into the survey. It can be done quickly and cheaply. Our team has collected data on over 260 thousand houses over a 14 year period.
 
 </div>
 
