@@ -80,7 +80,7 @@ Much of my early work with CEI involved providing informal support to two studen
 
 </div>
 
-### Natalie Kane, Childhood asthma
+### Natalie Kane, asthma
 
 ![](../images/kane.png)
 
@@ -94,7 +94,7 @@ I offered some informal advice about some Bayesian models she was using. She act
 
 </div>
 
-### Neal Wilson, childhood lead poisoning
+### Neal Wilson, lead poisoning
 
 ![](../images/wilson.png)
 
@@ -123,7 +123,13 @@ In the summer of 2020, I worked on a grant with CEI and partners at Children's M
 
 <div class="notes">
 
-Here's the first page of the notice of funding availability (NOFA) for the grant we applied to. NOFA is an acronym for Housing and Urban Development. You'll see other acronyms like RFA for NIH. Don't bother trying to read the NOFA here. A Google search of FR-6400-N-15 would bring it up if you are curious.
+Here's the first page of the notice of funding availability (NOFA) for the grant we applied to. NOFA is an acronym for Housing and Urban Development. 
+
+You'll see other acronyms like RFA for NIH.
+
+Here's a pop quiz. Put your answer in the chat box: What's the difference between an FOA, PA, RFA, and RFP
+
+Don't bother trying to read the NOFA here on this screen. A Google search of FR-6400-N-15 would bring it up if you are curious.
 
 This NOFA is 68 pages long and everyone involved with writing this grant read through all 68 pages multiple times. I can't stress enough how important it is to read the NOFA.
 
@@ -189,16 +195,11 @@ While the limit for the proposal is 25 pages, there are additional items outside
 
 ### Rating factors (100 points possible)
 
-+ Capacity of the Applicant and Relevant Organizational Experience
-  + Two elements (13 + 7 = 20 points)
-+ Need for the research
-  + Five elements (12 + 4 + 7 + 4 + 4 = 31 points)
-+ Soundness of Approach
-  + Four elements (20 + 5 + 1 + 5 = 31 points)
-+ Leveraging Resources
-  + One element (6 points)
-+ Achieving Results and Project Management
-  + Four elements (3 + 6 + 2 + 1 = 12 points)
++ Capacity of the Applicant and Relevant Organizational Experience: Two elements (13 + 7 = 20 points)
++ Need for the research: Five elements (12 + 4 + 7 + 4 + 4 = 31 points)
++ Soundness of Approach: Four elements (20 + 5 + 1 + 5 = 31 points)
++ Leveraging Resources: One element (6 points)
++ Achieving Results and Project Management: Four elements (3 + 6 + 2 + 1 = 12 points)
 
 <div class="notes">
 
@@ -213,6 +214,8 @@ HUD provides a rating system for grants with various points for each element. Yo
   
 <div class="notes">
 
+One of the elements under "Soundness of Approach" is "Quality assurance plan." This is something that should be part of every research study, but when HUD specifically asked for it, you absolutely, positively must respond. 
+
 We made sure to document a solid quality assurance plan. We even designated a quality assurance role for one of the invesigators.
 
 </div>
@@ -223,6 +226,8 @@ We made sure to document a solid quality assurance plan. We even designated a qu
   + This factor addresses your ability to obtain other resources that can be combined with HUD’s funding to increase the effectiveness of the proposed study. To receive points, your proposal should demonstrate that the effectiveness of HUD’s Technical Studies grant funds is being increased by securing other resources or by structuring the study in a cost-effective manner, such as integrating the work into an existing study that will be concurrent with your proposed study.
 
 <div class="notes">
+
+The fourth rating factor was "Leveraging resources." It is not too surprising that HUD would want to provide better ratings for those grants that could take advantage of other resources to supplement the research.
 
 It was tricky to attach a dollar value to it, but we claimed the neighborhood housing conditions survey data and a resources that would be combined with additional data to increase the effectiveness of the proposal.
 
