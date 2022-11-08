@@ -52,6 +52,53 @@ Is it ldl or hdl? Does anyone know?
 
 </div>
 
+### Quiz questions (1/3)
+
+Why does Joel Best call statistics a social construct?
+
++ Statistics are misquoted often on social media.
++ Statistics are selected, shaped, and presented by human beings.
++ Statistics are used to promote socialism.
++ Statistics are dehumanizing.
+
+<div class="notes">
+
+I want to list a few quiz questions relating to this lecture. Remember these questions when I get to the slide that discusses them.
+
+</div>
+
+### Quiz questions (2/3)
+
+What is the main philosophical foundation of empiricism?
+
++v Everything can be reduced to a mathematical equation.
++ Experiments can reveal the realities of the world.
++ Some questions are impossible to answer.
++ We construct our own reality based on our own lived experiences
+
+<div class="notes">
+
+Here's the second question.
+
+</div>
+
+### Quiz questions (3/3)
+
+What is a major problem with data science?
+
++ Data scientists rely on large amounts of data with uneven quality.
++ Models developed by data scientists can lead to loss of privacy.
++ Prediction models are a black box that can hide discriminatory intent.
++ All of the above.
+
+<div class="notes">
+
+Here's the third question. You don't need to answer these questions now. Just be ready to answer them after the lecture.
+
+</div>
+
+
+
 ### First poll question
 
 ![Figure 2. Quote from "Peggy Sue Got Married"](http://www.pmean.com/new-images/21/dark-side-01.png)
@@ -492,7 +539,7 @@ If there are any big lessons from this, they are that you should be skeptical ab
 
 ### No single cause of these problems
 
-1. wrong data
+1. Wrong data
 
 2. Wrong objective
 
@@ -510,7 +557,7 @@ Here's a classic Venn diagram that you will see in pretty much any article that 
 
 There are three areas of expertise that you need as a data scientist: knowledge of mathematics and statistics, skill with computer science and coding, and expertise in medical or scientific specialties.
 
-A more accurate picture would show that there is not enough overlap among these disciplines.Not that many people are skilled at both science and statistics. Fewer stil know both of those skills well and can program effectively.
+A more accurate picture would show that there is not enough overlap among these disciplines. Not that many people are skilled at both science and statistics. Fewer still know both of those skills well and can program effectively.
 
 That's actually good news from your perspective. You don't have to be a genius in all three areas. Be good in one area and have an appreciation of the the other two and you'll do just fine.
 
