@@ -356,23 +356,56 @@ The alternative hypothesis is complementary. I need to mention one-sided hypothe
 
 </div>
 
-### Definitions: Type I and II error rates
+### Definitions: Type I error
 
 + A Type I error is
   + rejecting the null hypothesis when the null hypothesis is true.
   + It is also known as a false positive. 
+
++ Example involving drug approval:
+  + a Type I error is allowing an ineffective drug onto the market.
+
+<div class="notes">
+
+One you have the null and alternative hypotheses, you collect statistics to help you accept or reject the null hypothesis. Since a sample is only part of the population, there is sampling error. This means that your statistic is only an estimate of a parameter. If you make a choice to accept or reject the null hypothesis, you could make an error. There are two types of errors, labeled Type I and Type II errors.
+
+A type I error is rejecting the null hypothesis when the null hypothesis is true. Let's consider what this means from the perspective of drug approval.
+
+The FDA requests that a new drug be shown to be superior, either to the current standard of care or sometimes to a placebo. Let's assume that the test is versus a placebo. The null hypothesis says that the new drug is equal to a placebo. The alternative hypothesis is that the new drug is better than placebo.
+
+If you reject the null hypothesis, you are claiming that the data supports the superiority of your new drug over placebo. But in reality, you made a mistake. In the population, the drug is no better than a placebo, but your sample tells you a different story. This is caused by sampling error--errors associated with the sampling process.
+
+If you make this type of error, you are letting an ineffective drug, one that is no better than a placebo, onto the market. Maybe this is good news for the drug company, but from every other perspective, those of the patients, their doctors, and society in general this is a disaster. Patients end up taking a drug that is no better than a sugar pill, so it is a huge waste of money. If there are other drugs out there on the market that are truly effective, this new drug might tempt some patients away from something that does work to something that doesn't work.
+
+Actually, even from the drug company's perspective, a Type I error is bad. Sure it gets you more money, but when the medical community finally figures out that this drug is a bust, it is a publicity black eye for the company.
+
+So think of a Type I error as allowing an ineffective drug onto the market.
+
+Errors associated with the sampling process lead you to a false positive conclusion. This is not good because you are now able to sell a drug for a substantial amount of money, but it is actually no better 
+
+</div>
+
+### Definitions: Type II error
 
 + A Type II error is
   + accepting the null hypothesis when the null hypothesis is false.
   + It is also known as a false negative
 
 + Example involving drug approval:
-  + a Type I error is allowing an ineffective drug onto the market.
   + a Type II error is keeping an effective drug off of the market.
   
 <div class="notes">
 
-One you have the null and alternative hypotheses, you collect statistics to help you accept or reject the null hypothesis. Since a sample is only part of the population, there is sampling error. This means that your statistic is only an estimate of a parameter. If you make a choice to accept or reject the null hypothesis, you could make an error. There are two types of errors, labeled Type I and Type II errors.
+This is not the only way you can make a mistake. A Type II error is accepting the null hypothesis when the null hypothesis is false.
+
+Again recall that the null hypothesis is the hypothesis of the status quo, no change, no difference. If you accept the null hypothesis, it is because in your sample, there was little or no difference between the sample mean of the new drug and the sample mean of the placebo. But in the population, there is indeed a difference.
+
+So this is bad news for the drug company. They had a drug that could actually be sold and make money for them. But because they falsely accepted the null hypothesis, they were not able to convince FDA to put the drug on the market. They lose out on a fair amount of profit. It's also bad from everyone else's perspective. Patients lose the opportunity to take a drug that is effective. If there are other drugs on the market that work, then it just means fewer drugs to pick from, less competition, and higher prices. But let's suppose that nothing currently on the market works. People suffer when there is a new drug barred from the market that could help them.
+
+Now balancing the risks between Type I errors and Type II errors is a difficult task. Everyone suffers when an error is made, but the drug companies suffer more from a Type II error than a Type I error. So they might be tempted to tip the scales in a way that decreases the Type II error rate but at the expense of an increased Type I error rate. Thankfully, FDA controls the drug approval process and assures that both risks are balanced.
+
+Actually, FDA (and the research community in general) used to be too much concerned with Type I errors and not enough with Type II errors. This changed largely because of the AIDS crisis. AIDS (Acquired Immune Deficiency Syndrome) was a disease that, in the 1970s and 80s was rapidly fatal and with no known treatment. Then a class of drugs, anti-retrovirals came along that showed some promise in managing this disease. The burden of AIDS was such that FDA rethought its perspective on how to test new drugs in a disease that had close to a 100% mortality rate and no approved treatment. There were patient advocacy groups like ACT UP that lobbied for these changes. And thanks to their work and the changing perspective of FDA, we now are taking a more balanced approach to drug approval, one that examines the costs to patients and to society in general when an ineffective drug is allowed on the market versus the costs when an effective drug is kept off the market.
+
 
 </div>
 
@@ -399,8 +432,11 @@ data.frame(mu=seq(90, 110, length=101), power=one_sample_ttest$power) %>%
   ggplot(aes(x=mu, y=power)) +
     expand_limits(y=0) +
     scale_y_continuous(breaks=seq(0, 1, length=6)) + 
-    geom_line()
+    geom_line() -> power_curve
+ggsave("figure-2.png", width=4, height=3, units="in")
 ```
+
+![Figure 2. Relationship between power and hypothesized mean](figure-2.png)
 
 <div class="notes">
 
@@ -417,12 +453,22 @@ data.frame(sample_size=2:100, power=one_sample_ttest$power) %>%
     expand_limits(y=0) +
     scale_x_continuous(breaks=seq(0, 100, length=6)) + 
     scale_y_continuous(breaks=seq(0, 1, length=6)) + 
-    geom_line()
+    geom_line() -> power_curve
+ggsave("figure-3.png", width=4, height=3, units="in")
 ```
+
+![Figure 3. Relationship between power and sample size](figure-3.png)
+
+<div class="notes">
+
+
+
+</div>
 
 ### Sample size justification
 
 In a nutshell, choose a sample size large enough
+
 + to insure that the chances of making a Type I or a Type II error are both small. or
 + (equivalently) to insure that alpha is small and power is large. or
 + to produce a reasonably narrow confidence interval.
