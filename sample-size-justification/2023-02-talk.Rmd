@@ -1,6 +1,6 @@
 ---
 title: "Sample size justification"
-author: Steve Simon
+author: "Steve Simon, https://github.com/pmean/papers-and-presentations/blob/master/sample-size-justification/2023-02-talk.pdf"
 source: "New"
 date: "Created 2022-02-02"
 output: powerpoint_presentation
@@ -461,7 +461,7 @@ ggsave("figure-3.png", width=4, height=3, units="in")
 
 <div class="notes">
 
-
+This graph shows the power for detecting a 5 unit shift in the mean for a group that has a standard deviation of 10 (an effect size of 0.5). This power is calculated for sample sizes of 2 all the way to 100. Notice a sharp rise in power early, but the graph also shows the diminishing returns. An increase of 10 subjects makes a big difference in power when your sample size is 30, but an increase in sample size of 10 when the sample size is 60 shows much less of an impact of power.
 
 </div>
 
@@ -594,15 +594,13 @@ In a study of two different skin barriers for burn patients, we are interested i
 
 </div>
 
-### Sample size justification using pain
+### Sample size justification using pain, the formula
 
 + Oucher scale
   + S = 1.5
   + MCD = 1
   
-$$n = \frac{(\sigma_1^2+\sigma_2^2)(z_{1-\alpha/2}+z_{1-\beta})}{MCD^2}$$
-
-n=35.3, round up to n=36 per group.
+$$n = (\sigma_1^2+\sigma_2^2)(z_{1-\alpha/2}+z_{1-\beta})^2 / MCD^2$$
 
 <div class="notes">
 
@@ -612,11 +610,64 @@ The formula for the sample size in each group is a bit messy, but nothing that y
 
 </div>
 
-### Sample size calculation using R
+### Sample size justification using pain, the calculations
+
+$$n = (\sigma_1^2+\sigma_2^2)(z_{1-\alpha/2}+z_{1-\beta})^2/MCD^2$$
+
+$$\ $$
+
+$$n = (\sigma_1^2+\sigma_2^2)(z_{0.975}+z_{0.80})^2/MCD^2$$
+
+$$ \ $$
+
+$$n = (1.5^2+1.5^2)(1.96+0.84)^2/1^2$$
+
+$$ \ $$
+
+
+n=35.3, round up to n=36 per group.
+
+<div class="notes">
+
+The formula for the sample size in each group is a bit messy, but nothing that you can't handle. Plug in the standard deviation of 1.5 in both spots, the various percentiles for the standard normal distribution, and the minimum clinically important difference. The sample size required to produce 80% power for a two-sided test at an alpha level of 0.05 is 35.3. Round this up to n=36 per group.
+
+</div>
+
+### Sample size calculation using R, program code
 
 ```{}
-> power.t.test(delta=1, sd=1.5, sig.level=0.05, power=0.80, type="two.sample")
+> power.t.test(
+    delta=1, 
+    sd=1.5, 
+    sig.level=0.05, 
+    power=0.80, 
+    n=NULL,
+    type="two.sample")
+```
 
+<div class="notes">
+
+Here's how you would do this in R. I love R and would be thrilled to give you an introduction to it, but I don't have enough time. Suffice it to say that You won't be quizzed on this later. 
+
+For those of you who do know R, this is how it works. Specify four out of the following five parameters:
+
+delta, the minimum clinically important difference
+
+sd, the standard deviation
+
+sig.level or alpha, the probability of a Type I error. This is traditionally set at 0.05, but there may be times that you want it to be 0.10 or 0.01.
+
+power or 1-beta. This is traditionally set at 0.8 or 0.9.
+
+n, the sample size per group.
+
+The parameter you want to compute is left as NULL. So if you want a sample size that produces 80% power, leave n as NULL. If you want to estimate power when the sample size is 50 per group, set power to NULL.
+
+</div>
+
+### Sample size calculation using R, output
+
+```{}
      Two-sample t test power calculation 
 
               n = 36.3058
@@ -631,13 +682,31 @@ NOTE: n is number in *each* group
 
 <div class="notes">
 
-For pediatric patients we usually measure pain with the Oucher, a five point scale that has been validated for children. A review of previous studies using the Oucher have shown that it has a standard deviation of about 1.5 units. We would be interested in seeing how large a sample size is needed to show a change of 1 unit, the smallest individual change attainable on the Oucher. We want to have a power of .80, or equivalently, the probability of a Type II error of .20.
+Here's the output. If you want 80% power, you need a sample size of (rounding up) 37 per group.
 
 </div>
 
-### Power calculation using PiFace
+### Power calculation using PiFace, where to find it
 
-![Figure 2. Excerpt from PiFace website](figure-2.png)
+![Figure 4. Excerpt from PiFace website](figure-4.png)
+
+<div class="notes">
+
+Let me show you a different way to calculate power. It uses a program called PiFace, that was developed by Russ Lenth at the University of Iowa. Russ was my dissertation advisor, and I would have loved to work on something like PiFace, but he developed it several years after I graduated. Anyway, it is a great program and is freely available. Do a web search on "PiFace" and "Power" and this page should pop up. PiFace is written in Java, and you need to download an install the Java Runtime Environment (JRE) prior to using this program. Both PiFace and JRE are free downloads.
+
+</div>
+
+### Power calculation using PiFace, 
+
+![Figure 5. Excerpt from PiFace website](figure-5.png)
+
+<div class="notes">
+
+I'm going to try to demonstrate this program live, but if that doesn't work, here is what the results are. A sample size of 36 per group gives you a power of 0.7966.
+
+There are lots of other programs out there that do power and sample size calculations.
+
+</div>
 
 ### Pop quiz, question #1
 
