@@ -1,18 +1,14 @@
 # papers-and-presentations
 
-This is a series of folders containing Markdown and Rmarkdown 
-code that I used in a variety of papers and presentations.
+This repository has been split into two repositories:
 
-I am moving the presentations to a [new repository, talks][talks].
+-   [papers][sim3]
+-   [talks][sim4]
 
-[talks]: https://github.com/pmean/talks
+[sim3]: https://github.com/pmean/papers
+[sim4]: https://github.com/pmean/talks
 
-Please look in the new repository for any talks in 2023
-or later.
-
-All the Markdown, Rmarkdown, or R code in this repository
-is in the public domain. Any images that I create using
-R code are also in the public domain.
+Anything left in this repository is in the public domain.
 
 You can do anything you want with any code or images that I
 have created. If you do use anything, an acknowledgement
